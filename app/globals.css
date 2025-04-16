@@ -1,0 +1,74 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap");
+@import "tailwindcss";
+@theme {
+  --font-inter: "Inter", sans-serif;
+  --font-nunito: "Nunito", sans-serif;
+  --color-pBlue-50: "#f1fafe";
+  --color-pBlue-100: "#e1f3fd";
+  --color-pBlue-200: "#bde8fa";
+  --color-pBlue-300: "#83d6f6";
+  --color-pBlue-400: "#31bced";
+  --color-pBlue-500: "#19aade";
+  --color-pBlue-600: "#0c89bd";
+  --color-pBlue-700: "#0b6e99";
+  --color-pBlue-800: "#0d5c7f";
+  --color-pBlue-900: "#114d69";
+  --color-pBlue-950: "#0b3146";
+}
+
+:root {
+  --text-color: #ffffff;
+  --backgeound: #171717;
+  --link: #61dafb;
+  --bg: #282c34;
+}
+
+/* ::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 5px;
+}
+::-webkit-scrollbar-track {
+  background-color: #f1f1f1;
+} */
+
+.hScreen {
+  height: calc(100vh - 60px);
+}
+
+body {
+  color: var(--text-color);
+  margin: 0;
+  padding: 0;
+}
+
+/* HTML: <div class="loader"></div> */
+.loader {
+  width: 50px;
+  aspect-ratio: 1;
+  display: grid;
+  border: 4px solid #0000;
+  border-radius: 50%;
+  border-right-color: #25b09b;
+  animation: l15 1s infinite linear;
+}
+.loader::before,
+.loader::after {
+  content: "";
+  grid-area: 1/1;
+  margin: 2px;
+  border: inherit;
+  border-radius: 50%;
+  animation: l15 2s infinite;
+}
+.loader::after {
+  margin: 8px;
+  animation-duration: 3s;
+}
+@keyframes l15 {
+  100% {
+    transform: rotate(1turn);
+  }
+}
