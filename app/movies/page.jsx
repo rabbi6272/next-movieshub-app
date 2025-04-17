@@ -2,9 +2,11 @@
 import { useState } from "react";
 import Image from "next/image";
 
+import { motion } from "framer-motion";
+
 import { useSearchMovies } from "@/utils/hooks/useSearchMovies";
 import { Loader } from "@/components/loader";
-import { SeparateMoviePage } from "@/app/movies/movieCardContainer";
+import { SeparateMoviePage } from "@/app/movies/SeparateMoviePage";
 
 export default function MoviesPage() {
   const [isShowingMovies, setIsShowingMovies] = useState(false);
@@ -21,15 +23,18 @@ export default function MoviesPage() {
     }
 
     if (error) {
-      return <p className="text-center text-red-500">{error}</p>;
+      return <p className="text-center text-red-500 my-6">{error}</p>;
     }
 
     return (
-      <div className="flex flex-col gap-2 my-2">
-        {movies?.map((movie) => (
-          <div
+      <div className="flex flex-col gap-1 my-2">
+        {movies?.map((movie, index) => (
+          <motion.div
             className="h-[100px] w-full rounded-lg bg-[#0d5c7f] hover:bg-[#114d69] flex items-center justify-between p-1.5 cursor-pointer"
             key={movie.imdbID}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: index * 0.1 }}
             onClick={() => {
               setSelectedMovieId(movie.imdbID);
               setIsShowingMovies(!isShowingMovies);
@@ -50,7 +55,7 @@ export default function MoviesPage() {
               </h1>
               <p className="text-sm">🗓️{movie.Year}</p>
             </div>
-          </div>
+          </motion.div>
         ))}
       </div>
     );

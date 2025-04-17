@@ -1,6 +1,8 @@
 "use client";
 import Image from "next/image";
 
+import { motion } from "framer-motion";
+
 import { Loader } from "@/components/loader";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -107,23 +109,31 @@ export function SeparateMoviePage({
         </div>
       )}
       <button
-        className="absolute top-[5px] left-[5px] md:top-[10px] md:left-[10px] h-[40px] w-[40px] rounded-full bg-blue-500 hover:bg-blue-600 active:scale-95 transition grid place-items-center"
+        className="absolute top-[5px] left-[5px] md:top-[10px] md:left-[10px] h-[40px] w-[40px] rounded-full bg-blue-500 hover:bg-blue-600 active:scale-95 transition duration-300 grid place-items-center"
         onClick={() => {
           setSelectedMovieId("");
           setIsShowingMovies(!isShowingMovies);
         }}
       >
-        <span className="material-symbols-outlined">arrow_back</span>
+        <span className="material-symbols-rounded">arrow_back</span>
       </button>
       {!loading && (
-        <div className="flex flex-col items-center justify-between">
-          <Image
-            height={200}
-            width={250}
-            src={movie.Poster === "N/A" ? "/no-image.png" : movie.Poster}
-            alt={movie.Title}
-            className="rounded-md object-cover aspect-auto"
-          />
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+          className="flex flex-col items-center justify-between"
+        >
+          {movie.Poster !== "N/A" && (
+            <Image
+              height={200}
+              width={250}
+              src={movie.Poster}
+              alt={movie.Title}
+              className="rounded-md object-cover aspect-auto"
+            />
+          )}
+
           <div className="flex-1 text-gray-300 p-2 lg:p-4 mx-auto flex flex-col gap-2 items-center justify-center text-base">
             <h1 className="text-xl text-white font-nunito font-bold">
               {movie.Title}
@@ -146,21 +156,22 @@ export function SeparateMoviePage({
             </p>
             <p>{movie.Plot}</p>
           </div>
-          <div className="flex gap-4">
+
+          <div className="flex gap-4 ">
             <button
-              className="px-3.5 md:px-6 py-2.5 rounded-full bg-transparent border-2 border-blue-600 cursor-pointer hover:bg-blue-500 active:scale-95 transition-all"
+              className="px-3.5 md:px-6 py-2.5 rounded-full bg-transparent border-2 border-blue-400 cursor-pointer hover:bg-blue-500 active:scale-95 transition-all duration-500"
               onClick={handleAddToWatchlist}
             >
-              Add to Watchlist
+              Want to Watch
             </button>
             <button
-              className="px-3.5 md:px-6 py-2.5 rounded-full bg-transparent border-2 border-blue-600 cursor-pointer hover:bg-blue-500 active:scale-95 transition-all"
+              className="px-3.5 md:px-6 py-2.5 rounded-full bg-transparent border-2 border-blue-400 cursor-pointer hover:bg-blue-500 active:scale-95 transition-all duration-500"
               onClick={handleAddToWatched}
             >
-              Add to Watched
+              Already Watched
             </button>
           </div>
-        </div>
+        </motion.div>
       )}
     </div>
   );
