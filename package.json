@@ -9,7 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@material-tailwind/react": "^2.1.10",
     "dot-env": "^0.0.1",
     "framer-motion": "^12.7.4",
     "mongoose": "^8.13.2",

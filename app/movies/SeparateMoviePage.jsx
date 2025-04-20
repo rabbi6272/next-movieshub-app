@@ -15,6 +15,8 @@ export function SeparateMoviePage({
 }) {
   const [movie, setMovie] = useState({});
   const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading2, setIsLoading2] = useState(false);
 
   useEffect(() => {
     fetch(`https://www.omdbapi.com/?i=${selectedMovieId}&apikey=5cc173f0`, {
@@ -29,6 +31,7 @@ export function SeparateMoviePage({
 
   async function handleAddToWatchlist() {
     try {
+      setIsLoading(true);
       const data = await fetch(
         `${process.env.NEXT_PUBLIC_BASEE_URL}/api/add-to-watchlist`,
         {
@@ -64,10 +67,13 @@ export function SeparateMoviePage({
         pauseOnHover: true,
         draggable: true,
       });
+    } finally {
+      setIsLoading(false);
     }
   }
   async function handleAddToWatched() {
     try {
+      setIsLoading2(true);
       const data = await fetch(`/api/add-to-watched`, {
         method: "POST",
         body: JSON.stringify({ movie }),
@@ -98,6 +104,8 @@ export function SeparateMoviePage({
         pauseOnHover: true,
         draggable: true,
       });
+    } finally {
+      setIsLoading2(false);
     }
   }
 
@@ -109,7 +117,7 @@ export function SeparateMoviePage({
         </div>
       )}
       <button
-        className="absolute top-[5px] left-[5px] md:top-[10px] md:left-[10px] h-[40px] w-[40px] rounded-full bg-blue-500 hover:bg-blue-600 active:scale-95 transition duration-300 grid place-items-center"
+        className="absolute top-[5px] left-[5px] md:top-[10px] md:left-[10px] h-[40px] w-[40px] rounded-full bg-[#23B1F3] active:scale-95 transition duration-300 grid place-items-center"
         onClick={() => {
           setSelectedMovieId("");
           setIsShowingMovies(!isShowingMovies);
@@ -159,16 +167,18 @@ export function SeparateMoviePage({
 
           <div className="flex gap-4 ">
             <button
-              className="px-3.5 md:px-6 py-2.5 rounded-full bg-transparent border-2 border-blue-400 cursor-pointer hover:bg-blue-500 active:scale-95 transition-all duration-500"
+              // className="px-3.5 md:px-6 py-2.5 rounded-full bg-transparent border-2 border-blue-400 cursor-pointer hover:bg-blue-500 active:scale-95 transition-all duration-500"
+              className="ui-button rounded-full"
               onClick={handleAddToWatchlist}
             >
-              Want to Watch
+              {isLoading ? "Adding..." : "Want to Watch"}
             </button>
             <button
-              className="px-3.5 md:px-6 py-2.5 rounded-full bg-transparent border-2 border-blue-400 cursor-pointer hover:bg-blue-500 active:scale-95 transition-all duration-500"
+              className="ui-button rounded-full"
+              // className="px-3.5 md:px-6 py-2.5 rounded-full bg-transparent border-2 border-blue-400 cursor-pointer hover:bg-blue-500 active:scale-95 transition-all duration-500"
               onClick={handleAddToWatched}
             >
-              Already Watched
+              {isLoading2 ? "Adding..." : "Already Watched"}
             </button>
           </div>
         </motion.div>
