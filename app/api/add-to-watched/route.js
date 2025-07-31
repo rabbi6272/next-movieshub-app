@@ -1,25 +1,29 @@
 import { NextResponse } from "next/server";
 
-import { connectDB } from "@/utils/db/connectDB";
-import MovieItem from "@/utils/model/Movie.model";
+import { findMovieByTitle, addMovie, updateMovie } from "@/utils/db/connectDB";
+import { createMovieObject } from "@/utils/model/Movie.model";
 
 export async function POST(request) {
   const { movie } = await request.json();
 
   try {
-    connectDB();
-    const savedMovie = await MovieItem.findOne({ Title: movie.Title });
-    if (savedMovie) {
-      if (savedMovie.watched) {
+    const existingMovie = await findMovieByTitle(movie.Title);
+
+    if (existingMovie) {
+      if (existingMovie.watched) {
         return NextResponse.json({
           status: 400,
           success: false,
           message: "Movie already exists in watched list",
         });
       } else {
-        savedMovie.wantToWatch = false;
-        savedMovie.watched = true;
-        await savedMovie.save();
+        // Update existing movie to watched
+        await updateMovie(existingMovie.id, {
+          wantToWatch: false,
+          watched: true,
+          updatedAt: new Date(),
+        });
+
         return NextResponse.json({
           status: 200,
           success: true,
@@ -27,7 +31,7 @@ export async function POST(request) {
         });
       }
     } else {
-      const data = new MovieItem({
+      const movieData = createMovieObject({
         Title: movie.Title,
         Year: movie.Year,
         Type: movie.Type,
@@ -39,7 +43,9 @@ export async function POST(request) {
         watched: true,
         wantToWatch: false,
       });
-      await data.save();
+
+      await addMovie(movieData);
+
       return NextResponse.json({
         status: 201,
         success: true,
@@ -47,10 +53,12 @@ export async function POST(request) {
       });
     }
   } catch (error) {
+    console.error("Error adding movie to watched list:", error);
     return NextResponse.json({
       status: 500,
       success: false,
       message: "Internal server error",
+      error: error.message,
     });
   }
 }

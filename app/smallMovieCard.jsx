@@ -8,6 +8,50 @@ import { toast } from "react-toastify";
 
 export function SmallMovieCard({ movie, index, movies, setMovies }) {
   const [isLoading, setIsLoading] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  async function handleUpdateMovieStatus(movieData, newStatus) {
+    try {
+      setIsUpdating(true);
+
+      const endpoint =
+        newStatus === "watched"
+          ? "/api/add-to-watched"
+          : "/api/add-to-watchlist";
+
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ movie: movieData }),
+      });
+
+      const { success, message } = await res.json();
+
+      if (success) {
+        toast.success(message);
+        // Update local state
+        const updatedMovies = movies.map((m) =>
+          m.id === movie.id
+            ? {
+                ...m,
+                watched: newStatus === "watched",
+                wantToWatch: newStatus === "watchlist",
+              }
+            : m
+        );
+        setMovies(updatedMovies);
+      } else {
+        toast.error(message);
+      }
+    } catch (error) {
+      toast.error("Failed to update movie status");
+      console.error("Update error:", error);
+    } finally {
+      setIsUpdating(false);
+    }
+  }
 
   // async function handleDeleteMovie(id) {
   //   try {
@@ -39,7 +83,7 @@ export function SmallMovieCard({ movie, index, movies, setMovies }) {
           });
           const { status, success, message } = await res.json();
           if (success) {
-            setMovies(movies.filter((movie) => movie._id !== id));
+            setMovies(movies.filter((movie) => movie.id !== id));
           } else {
             throw new Error(message);
           }
@@ -80,7 +124,7 @@ export function SmallMovieCard({ movie, index, movies, setMovies }) {
       <button
         className="absolute top-[3px] right-[3px] text-[20px] text-gray-400 hover:text-gray-300 transition-all font-light cursor-pointer"
         onClick={() => {
-          handleDeleteMovie(movie._id);
+          handleDeleteMovie(movie.id);
         }}
         disabled={isLoading}
       >
@@ -114,9 +158,15 @@ export function SmallMovieCard({ movie, index, movies, setMovies }) {
             movie.wantToWatch
               ? "bg-blue-500 border-2 border-blue-600"
               : "border border-gray-300"
-          } rounded-full font-medium px-3 py-1.5 grid place-items-center cursor-pointer`}
+          } rounded-full font-medium px-3 py-1.5 grid place-items-center cursor-pointer disabled:opacity-50`}
+          onClick={() => handleUpdateMovieStatus(movie, "watchlist")}
+          disabled={isUpdating}
         >
-          {movie.wantToWatch ? (
+          {isUpdating ? (
+            <span className="material-symbols-rounded animate-spin">
+              hourglass_empty
+            </span>
+          ) : movie.wantToWatch ? (
             <span className="material-symbols-rounded">bookmark_added</span>
           ) : (
             <span className="material-symbols-rounded">bookmark_add</span>
@@ -127,9 +177,15 @@ export function SmallMovieCard({ movie, index, movies, setMovies }) {
             movie.watched
               ? "bg-blue-500 border-2 border-blue-600"
               : "border border-gray-300"
-          } rounded-full font-medium px-3 py-1.5 grid place-items-center cursor-pointer`}
+          } rounded-full font-medium px-3 py-1.5 grid place-items-center cursor-pointer disabled:opacity-50`}
+          onClick={() => handleUpdateMovieStatus(movie, "watched")}
+          disabled={isUpdating}
         >
-          {movie.watched ? (
+          {isUpdating ? (
+            <span className="material-symbols-rounded animate-spin">
+              hourglass_empty
+            </span>
+          ) : movie.watched ? (
             <span className="material-symbols-rounded">done_all</span>
           ) : (
             <span className="material-symbols-rounded">check</span>

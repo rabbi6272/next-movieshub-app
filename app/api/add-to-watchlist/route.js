@@ -1,24 +1,24 @@
 import { NextResponse } from "next/server";
 
-import { connectDB } from "@/utils/db/connectDB";
-import MovieItem from "@/utils/model/Movie.model";
+import { findMovieByTitle, addMovie } from "@/utils/db/connectDB";
+import { createMovieObject } from "@/utils/model/Movie.model";
 
 export async function POST(request) {
   const { movie } = await request.json();
 
   try {
-    connectDB();
-    const savedMovie = await MovieItem.findOne({ Title: movie.Title });
-    if (savedMovie) {
+    const existingMovie = await findMovieByTitle(movie.Title);
+
+    if (existingMovie) {
       return NextResponse.json({
         status: 400,
         success: false,
         message: `Movie already exists in ${
-          savedMovie.watched ? "watched list" : "watchlist"
+          existingMovie.watched ? "watched list" : "watchlist"
         }`,
       });
     } else {
-      const data = new MovieItem({
+      const movieData = createMovieObject({
         Title: movie.Title,
         Year: movie.Year,
         Type: movie.Type,
@@ -30,7 +30,9 @@ export async function POST(request) {
         watched: false,
         wantToWatch: true,
       });
-      await data.save();
+
+      await addMovie(movieData);
+
       return NextResponse.json({
         status: 201,
         success: true,
@@ -38,10 +40,12 @@ export async function POST(request) {
       });
     }
   } catch (error) {
+    console.error("Error adding movie to watchlist:", error);
     return NextResponse.json({
       status: 500,
       success: false,
       message: "Internal server error",
+      error: error.message,
     });
   }
 }

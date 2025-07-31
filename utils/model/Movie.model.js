@@ -1,19 +1,44 @@
-import mongoose from "mongoose";
+// Firebase doesn't require schema definitions like MongoDB
+// This file defines the structure for documentation purposes
 
-const movieSchema = new mongoose.Schema({
-  Title: { type: String },
-  Year: { type: String },
-  Type: { type: String },
-  Genre: { ype: String },
-  Runtime: { type: String },
-  Poster: { type: String },
-  imdbRating: { type: String },
-  imdbVotes: { type: String },
-  watched: { type: Boolean, default: false },
-  wantToWatch: { type: Boolean, default: false },
-});
+export const movieStructure = {
+  Title: "string",
+  Year: "string",
+  Type: "string",
+  Genre: "string", // Fixed typo from "ype" to "type"
+  Runtime: "string",
+  Poster: "string",
+  imdbRating: "string",
+  imdbVotes: "string",
+  watched: "boolean", // default: false
+  wantToWatch: "boolean", // default: false
+};
 
-const MovieItem =
-  mongoose.models.MovieItem || mongoose.model("MovieItem", movieSchema);
-
-export default MovieItem;
+// Helper function to create a movie object with default values
+export function createMovieObject({
+  Title,
+  Year,
+  Type,
+  Genre,
+  Runtime,
+  Poster,
+  imdbRating,
+  imdbVotes,
+  watched = false,
+  wantToWatch = false,
+}) {
+  return {
+    Title,
+    Year,
+    Type,
+    Genre,
+    Runtime,
+    Poster,
+    imdbRating,
+    imdbVotes,
+    watched,
+    wantToWatch,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+}

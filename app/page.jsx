@@ -13,12 +13,9 @@ export default function HomePage() {
     async function fetchMovies() {
       try {
         setLoading(true);
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_BASEE_URL}/api/get-all-movies`,
-          {
-            method: "GET",
-          }
-        );
+        const res = await fetch(`/api/get-all-movies`, {
+          method: "GET",
+        });
         const { data: movies } = await res.json();
         setMovies(movies);
       } catch (error) {
@@ -66,7 +63,7 @@ export default function HomePage() {
           <div className="flex flex-col gap-1">
             {filteredMovies?.map((movie, index) => (
               <SmallMovieCard
-                key={movie._id}
+                key={movie.id}
                 movie={movie}
                 index={index}
                 setMovies={setMovies}
