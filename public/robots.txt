@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://movieshub.example.com/sitemap.xml

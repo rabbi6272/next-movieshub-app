@@ -186,7 +186,6 @@ body {
   width: 9em;
   height: 2.6em;
   line-height: 2.5em;
-  margin: 20px;
 
   position: relative;
   cursor: pointer;
@@ -210,7 +209,7 @@ body {
 }
 
 .ui-button:hover {
-  color: #fff;
+  color: #ececec;
 }
 
 .ui-button:before {

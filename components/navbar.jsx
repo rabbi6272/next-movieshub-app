@@ -1,6 +1,11 @@
 import localFont from "next/font/local";
+import { Inter } from "next/font/google";
 import Link from "next/link";
 
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+});
 const ttTrailers = localFont({
   src: "../app/fonts/TT Trailers Trial ExtraBold Italic.ttf",
   display: "swap",
@@ -16,10 +21,16 @@ export default function Navbar() {
         MoviesHub
       </h1>
       <div className="flex items-center gap-6 lg:gap-8">
-        <Link className="hover:text-blue-400 transition-colors" href="/">
+        <Link
+          className={`${inter.className} hover:text-blue-400 transition-colors`}
+          href="/"
+        >
           Home
         </Link>
-        <Link className="hover:text-blue-400 transition-colors" href="/movies">
+        <Link
+          className={`${inter.className} hover:text-blue-400 transition-colors`}
+          href="/movies"
+        >
           Movies
         </Link>
       </div>

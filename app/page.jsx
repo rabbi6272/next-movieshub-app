@@ -44,7 +44,7 @@ export default function HomePage() {
             <button
               className={`flex-1 py-3 border-2 border-[#0d5c7f] ${
                 category === "watchlist" && "bg-[#0d5c7f]"
-              } transition-all duration-500 rounded-l-full`}
+              } transition-all duration-500 rounded-l-lg`}
               onClick={() => setCategory("watchlist")}
             >
               Watchlist
@@ -52,7 +52,7 @@ export default function HomePage() {
             <button
               className={`flex-1 py-3 border-2 border-[#0d5c7f] ${
                 category === "watched" && "bg-[#0d5c7f]"
-              } transition-all duration-500 rounded-r-full`}
+              } transition-all duration-500 rounded-r-lg`}
               onClick={() => setCategory("watched")}
             >
               Watched

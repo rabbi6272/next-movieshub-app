@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Head from "next/head";
 import Image from "next/image";
 
 import { motion } from "framer-motion";
@@ -62,26 +63,49 @@ export default function MoviesPage() {
   };
 
   return (
-    <div>
-      {isShowingMovies ? (
-        <SeparateMoviePage
-          selectedMovieId={selectedMovieId}
-          setSelectedMovieId={setSelectedMovieId}
-          isShowingMovies={isShowingMovies}
-          setIsShowingMovies={setIsShowingMovies}
+    <>
+      <Head>
+        <title>Search Movies | MoviesHub</title>
+        <meta
+          name="description"
+          content="Search and discover your favorite movies on MoviesHub. Find details, ratings, and more."
         />
-      ) : (
-        <div className="w-[95%] md:w-[60%] lg:w-[40%] mx-auto my-3 ">
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search for movies..."
-            className="w-full h-12 rounded-full border-2 border-[#0d5c7f] focus:outline-none px-4 text-white  placeholder:text-gray-400"
+        <meta property="og:title" content="Search Movies | MoviesHub" />
+        <meta
+          property="og:description"
+          content="Search and discover your favorite movies on MoviesHub. Find details, ratings, and more."
+        />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="/icon.png" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Search Movies | MoviesHub" />
+        <meta
+          name="twitter:description"
+          content="Search and discover your favorite movies on MoviesHub. Find details, ratings, and more."
+        />
+        <meta name="twitter:image" content="/icon.png" />
+      </Head>
+      <div>
+        {isShowingMovies ? (
+          <SeparateMoviePage
+            selectedMovieId={selectedMovieId}
+            setSelectedMovieId={setSelectedMovieId}
+            isShowingMovies={isShowingMovies}
+            setIsShowingMovies={setIsShowingMovies}
           />
-          {renderMovieList()}
-        </div>
-      )}
-    </div>
+        ) : (
+          <div className="w-[95%] md:w-[60%] lg:w-[40%] mx-auto my-3">
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search for movies..."
+              className="w-full h-12 rounded-full border-2 border-[#0d5c7f] focus:outline-none px-4 text-white  placeholder:text-gray-400"
+            />
+            {renderMovieList()}
+          </div>
+        )}
+      </div>
+    </>
   );
 }

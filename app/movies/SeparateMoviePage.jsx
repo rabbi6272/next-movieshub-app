@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import Head from "next/head";
 
 import { delay, motion } from "framer-motion";
 
@@ -70,7 +71,7 @@ export function SeparateMoviePage({
     try {
       setIsLoading2(true);
       const movieData = { ...movie, watched: true };
-      const { message } = await addMovie(movieData);
+      const { success, message } = await addMovie(movieData);
       if (success) {
         toast.success(message, {
           position: "bottom-center",
@@ -102,102 +103,189 @@ export function SeparateMoviePage({
   }
 
   return (
-    <div className="relative my-3 p-2 md:p-3 w-[95%] md:w-[60%] lg:w-[45%] mx-auto rounded-lg bg-[#0d5c7f] flex flex-col items-center justify-between">
-      {loading && (
-        <div className="h-full w-full grid place-items-center">
-          <Loader />
-        </div>
-      )}
-      <button
-        className="absolute top-[5px] left-[5px] md:top-[10px] md:left-[10px] h-[40px] w-[40px] rounded-full bg-[#23B1F3] active:scale-95 transition duration-300 grid place-items-center"
-        onClick={() => {
-          setSelectedMovieId("");
-          setIsShowingMovies(!isShowingMovies);
-        }}
-      >
-        <span className="material-symbols-rounded">arrow_back</span>
-      </button>
-      {!loading && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1 }}
-          className="flex flex-col items-center justify-between"
+    <>
+      <Head>
+        <title>
+          {movie.Title
+            ? `${movie.Title} (${movie.Year}) | MoviesHub`
+            : "Movie Details | MoviesHub"}
+        </title>
+        <meta
+          name="description"
+          content={
+            movie.Plot
+              ? movie.Plot
+              : "Movie details, ratings, and more on MoviesHub."
+          }
+        />
+        <meta
+          property="og:title"
+          content={
+            movie.Title
+              ? `${movie.Title} (${movie.Year}) | MoviesHub`
+              : "Movie Details | MoviesHub"
+          }
+        />
+        <meta
+          property="og:description"
+          content={
+            movie.Plot
+              ? movie.Plot
+              : "Movie details, ratings, and more on MoviesHub."
+          }
+        />
+        <meta property="og:type" content="article" />
+        {movie.Poster && movie.Poster !== "N/A" && (
+          <meta property="og:image" content={movie.Poster} />
+        )}
+        <meta name="twitter:card" content="summary_large_image" />
+        {/* Structured Data for Movie */}
+        {movie.Title && (
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "Movie",
+                name: movie.Title,
+                image:
+                  movie.Poster && movie.Poster !== "N/A"
+                    ? movie.Poster
+                    : undefined,
+                description: movie.Plot,
+                director: movie.Director,
+                datePublished: movie.Released,
+                genre: movie.Genre,
+                aggregateRating:
+                  movie.imdbRating && movie.imdbVotes
+                    ? {
+                        "@type": "AggregateRating",
+                        ratingValue: movie.imdbRating,
+                        ratingCount: movie.imdbVotes.replace(/,/g, ""),
+                      }
+                    : undefined,
+              }),
+            }}
+          />
+        )}
+        <meta
+          name="twitter:title"
+          content={
+            movie.Title
+              ? `${movie.Title} (${movie.Year}) | MoviesHub`
+              : "Movie Details | MoviesHub"
+          }
+        />
+        <meta
+          name="twitter:description"
+          content={
+            movie.Plot
+              ? movie.Plot
+              : "Movie details, ratings, and more on MoviesHub."
+          }
+        />
+        {movie.Poster && movie.Poster !== "N/A" && (
+          <meta name="twitter:image" content={movie.Poster} />
+        )}
+      </Head>
+      <div className="relative my-3 p-2 md:p-3 w-[95%] md:w-[60%] lg:w-[45%] mx-auto rounded-lg bg-[#0d5c7f] flex flex-col items-center justify-between">
+        {loading && (
+          <div className="h-full w-full grid place-items-center">
+            <Loader />
+          </div>
+        )}
+        <button
+          className="absolute top-[5px] left-[5px] md:top-[10px] md:left-[10px] h-[40px] w-[40px] rounded-full bg-[#23B1F3] active:scale-95 transition duration-300 grid place-items-center"
+          onClick={() => {
+            setSelectedMovieId("");
+            setIsShowingMovies(!isShowingMovies);
+          }}
         >
-          {movie.Poster !== "N/A" && (
-            <Image
-              height={200}
-              width={250}
-              src={movie.Poster}
-              alt={movie.Title}
-              className="rounded-md object-cover aspect-auto"
-            />
-          )}
-
+          <span className="material-symbols-rounded text-gray-100">
+            arrow_back
+          </span>
+        </button>
+        {!loading && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 0.2 }}
-            className="flex-1 text-gray-300 p-2 lg:p-4 mx-auto flex flex-col gap-2 items-center justify-center text-base"
+            transition={{ duration: 1 }}
+            className="flex flex-col items-center justify-between"
           >
-            <h1 className="text-2xl lg:text-3xl text-white font-nunito font-bold">
-              {movie.Title}
-            </h1>
-            <div className="flex gap-6">
-              <div className="flex-1 text-right">
-                <span>⭐{movie.imdbRating}</span>
-                <br />
-                <span>Year: {movie.Year}</span>
-                <br />
-                <span>Runtime: {movie.Runtime}</span>
-                <br />
-                <span>Director: {movie.Director}</span>
-                <br />
-              </div>
-              <div className="flex-1 text-left">
-                <span>📈{movie.imdbVotes}</span>
-                <br />
-                <span>Released: {movie.Released}</span>
-                <br />
-                <span>Genre: {movie.Genre}</span>
-                <br />
-                <span>Language: {movie.Language}</span>
-                <br />
-              </div>
-            </div>
+            {movie.Poster !== "N/A" && (
+              <Image
+                height={200}
+                width={250}
+                src={movie.Poster}
+                alt={movie.Title}
+                className="rounded-md object-cover aspect-auto"
+              />
+            )}
 
-            <motion.p
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 0.4 }}
+              transition={{ duration: 1, delay: 0.2 }}
+              className="flex-1 text-gray-300 py-2 lg:py-4 mx-auto flex flex-col gap-2 items-center justify-center text-base"
             >
-              {movie.Plot}
-            </motion.p>
-          </motion.div>
+              <h1 className="text-2xl lg:text-3xl text-white font-nunito font-bold">
+                {movie.Title}
+              </h1>
+              <div className="flex gap-6">
+                <div className="flex-1 text-right">
+                  <span>⭐{movie.imdbRating}</span>
+                  <br />
+                  <span>Year: {movie.Year}</span>
+                  <br />
+                  <span>Runtime: {movie.Runtime}</span>
+                  <br />
+                  <span>Director: {movie.Director}</span>
+                  <br />
+                </div>
+                <div className="flex-1 text-left">
+                  <span>📈{movie.imdbVotes}</span>
+                  <br />
+                  <span>Released: {movie.Released}</span>
+                  <br />
+                  <span>Genre: {movie.Genre}</span>
+                  <br />
+                  <span>Language: {movie.Language}</span>
+                  <br />
+                </div>
+              </div>
 
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 0.6 }}
-            className="flex gap-2 md:gap-4"
-          >
-            <button
-              // className="px-3.5 md:px-6 py-2.5 rounded-full bg-transparent border-2 border-blue-400 cursor-pointer hover:bg-blue-500 active:scale-95 transition-all duration-500"
-              className="ui-button rounded-full"
-              onClick={handleAddToWatchlist}
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 1, delay: 0.4 }}
+                className="text-justify"
+              >
+                {movie.Plot}
+              </motion.p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1, delay: 0.6 }}
+              className="flex gap-8 md:gap-12"
             >
-              {isLoading ? "Adding..." : "Want to Watch?"}
-            </button>
-            <button
-              className="ui-button rounded-full"
-              // className="px-3.5 md:px-6 py-2.5 rounded-full bg-transparent border-2 border-blue-400 cursor-pointer hover:bg-blue-500 active:scale-95 transition-all duration-500"
-              onClick={handleAddToWatched}
-            >
-              {isLoading2 ? "Adding..." : "Already Watched?"}
-            </button>
+              <button
+                className="ui-button rounded-full"
+                onClick={handleAddToWatchlist}
+              >
+                {isLoading ? "Adding..." : "Want to Watch ?"}
+              </button>
+              <button
+                className="ui-button rounded-full"
+                onClick={handleAddToWatched}
+              >
+                {isLoading2 ? "Adding..." : "Watched ?"}
+              </button>
+            </motion.div>
           </motion.div>
-        </motion.div>
-      )}
-    </div>
+        )}
+      </div>
+    </>
   );
 }
