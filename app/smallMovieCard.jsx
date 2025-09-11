@@ -6,6 +6,8 @@ import { motion } from "framer-motion";
 
 import { toast } from "react-toastify";
 
+import { deleteMovie, updateMovie } from "@/utils/db/connectDB";
+
 export function SmallMovieCard({ movie, index, movies, setMovies }) {
   const [isLoading, setIsLoading] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -14,20 +16,12 @@ export function SmallMovieCard({ movie, index, movies, setMovies }) {
     try {
       setIsUpdating(true);
 
-      const endpoint =
-        newStatus === "watched"
-          ? "/api/add-to-watched"
-          : "/api/add-to-watchlist";
+      const newMovie = {
+        ...movieData,
+        watched: newStatus === "watched" ? true : false,
+      };
 
-      const res = await fetch(endpoint, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ movie: movieData }),
-      });
-
-      const { success, message } = await res.json();
+      const { success, message } = await updateMovie(newMovie.id, newMovie);
 
       if (success) {
         toast.success(message);
@@ -53,35 +47,13 @@ export function SmallMovieCard({ movie, index, movies, setMovies }) {
     }
   }
 
-  // async function handleDeleteMovie(id) {
-  //   try {
-  //     setIsLoading(true);
-  //     const res = await fetch(`/api/delete-movie?id=${id}`, {
-  //       method: "DELETE",
-  //     });
-  //     const { status, success, message } = await res.json();
-  //     if (success) {
-  //       toast.success(message);
-  //       setMovies(movies.filter((movie) => movie._id !== id));
-  //     } else {
-  //       toast.error(message);
-  //     }
-  //   } catch (error) {
-  //     toast.error(error.message);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // }
   async function handleDeleteMovie(id) {
     try {
       setIsLoading(true);
 
       toast.promise(
         (async () => {
-          const res = await fetch(`/api/delete-movie?id=${id}`, {
-            method: "DELETE",
-          });
-          const { status, success, message } = await res.json();
+          const { success, message } = await deleteMovie(id);
           if (success) {
             setMovies(movies.filter((movie) => movie.id !== id));
           } else {
@@ -113,14 +85,6 @@ export function SmallMovieCard({ movie, index, movies, setMovies }) {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5, delay: 0.1 * index }}
     >
-      {/* <button
-        className="absolute top-[3px] right-[3px] text-[20px] text-gray-400 hover:text-gray-300 transition-all font-light cursor-pointer"
-        onClick={() => {
-          handleDeleteMovie(movie._id);
-        }}
-      >
-        <span className="material-symbols-rounded">close</span>
-      </button> */}
       <button
         className="absolute top-[3px] right-[3px] text-[20px] text-gray-400 hover:text-gray-300 transition-all font-light cursor-pointer"
         onClick={() => {
@@ -155,10 +119,10 @@ export function SmallMovieCard({ movie, index, movies, setMovies }) {
       <div className="flex flex-col gap-2 pr-6">
         <button
           className={`${
-            movie.wantToWatch
+            movie.watched === false
               ? "bg-blue-500 border-2 border-blue-600"
               : "border border-gray-300"
-          } rounded-full font-medium px-3 py-1.5 grid place-items-center cursor-pointer disabled:opacity-50`}
+          } rounded-full font-medium px-3 py-1 grid place-items-center cursor-pointer disabled:opacity-50`}
           onClick={() => handleUpdateMovieStatus(movie, "watchlist")}
           disabled={isUpdating}
         >
@@ -166,7 +130,7 @@ export function SmallMovieCard({ movie, index, movies, setMovies }) {
             <span className="material-symbols-rounded animate-spin">
               hourglass_empty
             </span>
-          ) : movie.wantToWatch ? (
+          ) : movie.watched === false ? (
             <span className="material-symbols-rounded">bookmark_added</span>
           ) : (
             <span className="material-symbols-rounded">bookmark_add</span>
@@ -174,10 +138,10 @@ export function SmallMovieCard({ movie, index, movies, setMovies }) {
         </button>
         <button
           className={`${
-            movie.watched
+            movie.watched === true
               ? "bg-blue-500 border-2 border-blue-600"
               : "border border-gray-300"
-          } rounded-full font-medium px-3 py-1.5 grid place-items-center cursor-pointer disabled:opacity-50`}
+          } rounded-full font-medium px-3 py-1 grid place-items-center cursor-pointer disabled:opacity-50`}
           onClick={() => handleUpdateMovieStatus(movie, "watched")}
           disabled={isUpdating}
         >
@@ -185,7 +149,7 @@ export function SmallMovieCard({ movie, index, movies, setMovies }) {
             <span className="material-symbols-rounded animate-spin">
               hourglass_empty
             </span>
-          ) : movie.watched ? (
+          ) : movie.watched === true ? (
             <span className="material-symbols-rounded">done_all</span>
           ) : (
             <span className="material-symbols-rounded">check</span>

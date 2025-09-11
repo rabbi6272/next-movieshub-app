@@ -1,11 +1,12 @@
 "use client";
 import Image from "next/image";
 
-import { motion } from "framer-motion";
+import { delay, motion } from "framer-motion";
 
 import { Loader } from "@/components/loader";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { addMovie } from "@/utils/db/connectDB";
 
 export function SeparateMoviePage({
   selectedMovieId,
@@ -32,14 +33,8 @@ export function SeparateMoviePage({
   async function handleAddToWatchlist() {
     try {
       setIsLoading(true);
-      const data = await fetch(
-        `${process.env.NEXT_PUBLIC_BASEE_URL}/api/add-to-watchlist`,
-        {
-          method: "POST",
-          body: JSON.stringify({ movie }),
-        }
-      );
-      const { status, success, message } = await data.json();
+      const movieData = { ...movie, watched: false };
+      const { success, message } = await addMovie(movieData);
       if (success) {
         toast.success(message, {
           position: "bottom-center",
@@ -74,11 +69,8 @@ export function SeparateMoviePage({
   async function handleAddToWatched() {
     try {
       setIsLoading2(true);
-      const data = await fetch(`/api/add-to-watched`, {
-        method: "POST",
-        body: JSON.stringify({ movie }),
-      });
-      const { status, success, message } = await data.json();
+      const movieData = { ...movie, watched: true };
+      const { message } = await addMovie(movieData);
       if (success) {
         toast.success(message, {
           position: "bottom-center",
@@ -142,45 +134,68 @@ export function SeparateMoviePage({
             />
           )}
 
-          <div className="flex-1 text-gray-300 p-2 lg:p-4 mx-auto flex flex-col gap-2 items-center justify-center text-base">
-            <h1 className="text-xl text-white font-nunito font-bold">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 0.2 }}
+            className="flex-1 text-gray-300 p-2 lg:p-4 mx-auto flex flex-col gap-2 items-center justify-center text-base"
+          >
+            <h1 className="text-2xl lg:text-3xl text-white font-nunito font-bold">
               {movie.Title}
             </h1>
-            <p className="flex gap-8">
-              <span>⭐{movie.imdbRating}</span>
-              <span>📈{movie.imdbVotes}</span>
-            </p>
-            <p className="flex gap-8">
-              <span>Year: {movie.Year}</span>
-              <span>Released: {movie.Released}</span>
-            </p>
-            <p className="flex gap-8">
-              <span>Runtime: {movie.Runtime}</span>
-              <span>Genre: {movie.Genre}</span>
-            </p>
-            <p className="flex gap-8">
-              <span>Director: {movie.Director}</span>
-              <span>Language: {movie.Language}</span>
-            </p>
-            <p>{movie.Plot}</p>
-          </div>
+            <div className="flex gap-6">
+              <div className="flex-1 text-right">
+                <span>⭐{movie.imdbRating}</span>
+                <br />
+                <span>Year: {movie.Year}</span>
+                <br />
+                <span>Runtime: {movie.Runtime}</span>
+                <br />
+                <span>Director: {movie.Director}</span>
+                <br />
+              </div>
+              <div className="flex-1 text-left">
+                <span>📈{movie.imdbVotes}</span>
+                <br />
+                <span>Released: {movie.Released}</span>
+                <br />
+                <span>Genre: {movie.Genre}</span>
+                <br />
+                <span>Language: {movie.Language}</span>
+                <br />
+              </div>
+            </div>
 
-          <div className="flex gap-4 ">
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1, delay: 0.4 }}
+            >
+              {movie.Plot}
+            </motion.p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 0.6 }}
+            className="flex gap-2 md:gap-4"
+          >
             <button
               // className="px-3.5 md:px-6 py-2.5 rounded-full bg-transparent border-2 border-blue-400 cursor-pointer hover:bg-blue-500 active:scale-95 transition-all duration-500"
               className="ui-button rounded-full"
               onClick={handleAddToWatchlist}
             >
-              {isLoading ? "Adding..." : "Want to Watch"}
+              {isLoading ? "Adding..." : "Want to Watch?"}
             </button>
             <button
               className="ui-button rounded-full"
               // className="px-3.5 md:px-6 py-2.5 rounded-full bg-transparent border-2 border-blue-400 cursor-pointer hover:bg-blue-500 active:scale-95 transition-all duration-500"
               onClick={handleAddToWatched}
             >
-              {isLoading2 ? "Adding..." : "Already Watched"}
+              {isLoading2 ? "Adding..." : "Already Watched?"}
             </button>
-          </div>
+          </motion.div>
         </motion.div>
       )}
     </div>

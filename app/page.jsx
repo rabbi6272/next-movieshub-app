@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 
 import { SmallMovieCard } from "@/app/smallMovieCard";
 import { Loader } from "@/components/loader";
+import { getAllMovies, updateMovie, deleteMovie } from "@/utils/db/connectDB";
 
 export default function HomePage() {
   const [movies, setMovies] = useState([]);
@@ -13,10 +14,7 @@ export default function HomePage() {
     async function fetchMovies() {
       try {
         setLoading(true);
-        const res = await fetch(`/api/get-all-movies`, {
-          method: "GET",
-        });
-        const { data: movies } = await res.json();
+        const movies = await getAllMovies();
         setMovies(movies);
       } catch (error) {
         console.log(error);
@@ -26,13 +24,13 @@ export default function HomePage() {
     }
 
     fetchMovies();
-  }, []);
+  }, [updateMovie, deleteMovie]);
 
   let filteredMovies;
 
   category === "watchlist"
-    ? (filteredMovies = movies.filter((movie) => movie.wantToWatch))
-    : (filteredMovies = movies.filter((movie) => movie.watched));
+    ? (filteredMovies = movies?.filter((movie) => movie.watched === false))
+    : (filteredMovies = movies?.filter((movie) => movie.watched === true));
 
   return (
     <div className="w-[95%] md:w-[60%] lg:w-[40%] mx-auto my-2">
@@ -46,7 +44,7 @@ export default function HomePage() {
             <button
               className={`flex-1 py-3 border-2 border-[#0d5c7f] ${
                 category === "watchlist" && "bg-[#0d5c7f]"
-              } transition-all duration-500 rounded-l-md`}
+              } transition-all duration-500 rounded-l-full`}
               onClick={() => setCategory("watchlist")}
             >
               Watchlist
@@ -54,7 +52,7 @@ export default function HomePage() {
             <button
               className={`flex-1 py-3 border-2 border-[#0d5c7f] ${
                 category === "watched" && "bg-[#0d5c7f]"
-              } transition-all duration-500 rounded-r-md`}
+              } transition-all duration-500 rounded-r-full`}
               onClick={() => setCategory("watched")}
             >
               Watched

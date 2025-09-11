@@ -5,8 +5,6 @@ import {
   doc,
   deleteDoc,
   updateDoc,
-  query,
-  where,
   getDoc,
 } from "firebase/firestore";
 import { db } from "./firebaseConfig";
@@ -37,6 +35,7 @@ export async function getAllMovies() {
     querySnapshot.forEach((doc) => {
       movies.push({ id: doc.id, ...doc.data() });
     });
+    console.log(movies);
     return movies;
   } catch (error) {
     handleFirebaseError(error, "getting movies");
@@ -47,29 +46,12 @@ export async function getAllMovies() {
 export async function addMovie(movieData) {
   try {
     const docRef = await addDoc(collection(db, MOVIES_COLLECTION), movieData);
-    return { id: docRef.id, ...movieData };
+    return {
+      success: true,
+      message: "Movie added successfully",
+    };
   } catch (error) {
     handleFirebaseError(error, "adding movie");
-  }
-}
-
-// Find movie by title
-export async function findMovieByTitle(title) {
-  try {
-    const q = query(
-      collection(db, MOVIES_COLLECTION),
-      where("Title", "==", title)
-    );
-    const querySnapshot = await getDocs(q);
-
-    if (querySnapshot.empty) {
-      return null;
-    }
-
-    const doc = querySnapshot.docs[0];
-    return { id: doc.id, ...doc.data() };
-  } catch (error) {
-    handleFirebaseError(error, "finding movie by title");
   }
 }
 
@@ -81,7 +63,7 @@ export async function updateMovie(movieId, updateData) {
 
     // Get the updated document
     const updatedDoc = await getDoc(movieRef);
-    return { id: updatedDoc.id, ...updatedDoc.data() };
+    return { success: true, message: "Movie updated successfully" };
   } catch (error) {
     handleFirebaseError(error, "updating movie");
   }
@@ -91,7 +73,10 @@ export async function updateMovie(movieId, updateData) {
 export async function deleteMovie(movieId) {
   try {
     await deleteDoc(doc(db, MOVIES_COLLECTION, movieId));
-    return true;
+    return {
+      success: true,
+      message: "Movie deleted successfully",
+    };
   } catch (error) {
     handleFirebaseError(error, "deleting movie");
   }
