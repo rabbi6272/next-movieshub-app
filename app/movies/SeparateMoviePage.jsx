@@ -8,6 +8,7 @@ import { Loader } from "@/components/loader";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { addMovie } from "@/utils/db/connectDB";
+import { useLocalStorage } from "@/utils/localSrorage";
 
 export function SeparateMoviePage({
   selectedMovieId,
@@ -19,6 +20,7 @@ export function SeparateMoviePage({
   const [loading, setLoading] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoading2, setIsLoading2] = useState(false);
+  const { userID } = useLocalStorage();
 
   useEffect(() => {
     fetch(`https://www.omdbapi.com/?i=${selectedMovieId}&apikey=5cc173f0`, {
@@ -35,7 +37,7 @@ export function SeparateMoviePage({
     try {
       setIsLoading(true);
       const movieData = { ...movie, watched: false };
-      const { success, message } = await addMovie(movieData);
+      const { success, message } = await addMovie(movieData, userID);
       if (success) {
         toast.success(message, {
           position: "bottom-center",
@@ -71,7 +73,7 @@ export function SeparateMoviePage({
     try {
       setIsLoading2(true);
       const movieData = { ...movie, watched: true };
-      const { success, message } = await addMovie(movieData);
+      const { success, message } = await addMovie(movieData, userID);
       if (success) {
         toast.success(message, {
           position: "bottom-center",

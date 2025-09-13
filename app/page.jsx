@@ -3,18 +3,20 @@ import { useState, useEffect } from "react";
 
 import { SmallMovieCard } from "@/app/smallMovieCard";
 import { Loader } from "@/components/loader";
+import { useLocalStorage } from "@/utils/localSrorage";
 import { getAllMovies, updateMovie, deleteMovie } from "@/utils/db/connectDB";
 
 export default function HomePage() {
   const [movies, setMovies] = useState([]);
   const [category, setCategory] = useState("watchlist");
   const [isLoading, setLoading] = useState(false);
+  const { userID } = useLocalStorage();
 
   useEffect(() => {
     async function fetchMovies() {
       try {
         setLoading(true);
-        const movies = await getAllMovies();
+        const movies = await getAllMovies(userID);
         setMovies(movies);
       } catch (error) {
         console.log(error);
@@ -62,6 +64,7 @@ export default function HomePage() {
             {filteredMovies?.map((movie, index) => (
               <SmallMovieCard
                 key={movie.id}
+                userID={userID}
                 movie={movie}
                 index={index}
                 setMovies={setMovies}

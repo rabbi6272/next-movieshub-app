@@ -28,14 +28,13 @@ function handleFirebaseError(error, operation) {
 }
 
 // Get all movies
-export async function getAllMovies() {
+export async function getAllMovies(userID) {
   try {
-    const querySnapshot = await getDocs(collection(db, MOVIES_COLLECTION));
+    const querySnapshot = await getDocs(collection(db, userID));
     const movies = [];
     querySnapshot.forEach((doc) => {
       movies.push({ id: doc.id, ...doc.data() });
     });
-    console.log(movies);
     return movies;
   } catch (error) {
     handleFirebaseError(error, "getting movies");
@@ -43,9 +42,9 @@ export async function getAllMovies() {
 }
 
 // Add a new movie
-export async function addMovie(movieData) {
+export async function addMovie(movieData, userID) {
   try {
-    const docRef = await addDoc(collection(db, MOVIES_COLLECTION), movieData);
+    const docRef = await addDoc(collection(db, userID), movieData);
     return {
       success: true,
       message: "Movie added successfully",
@@ -56,9 +55,9 @@ export async function addMovie(movieData) {
 }
 
 // Update movie by ID
-export async function updateMovie(movieId, updateData) {
+export async function updateMovie(movieId, updateData, userID) {
   try {
-    const movieRef = doc(db, MOVIES_COLLECTION, movieId);
+    const movieRef = doc(db, userID, movieId);
     await updateDoc(movieRef, updateData);
 
     // Get the updated document
@@ -70,9 +69,9 @@ export async function updateMovie(movieId, updateData) {
 }
 
 // Delete movie by ID
-export async function deleteMovie(movieId) {
+export async function deleteMovie(movieId, userID) {
   try {
-    await deleteDoc(doc(db, MOVIES_COLLECTION, movieId));
+    await deleteDoc(doc(db, userID, movieId));
     return {
       success: true,
       message: "Movie deleted successfully",

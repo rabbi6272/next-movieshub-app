@@ -8,11 +8,11 @@ import { toast } from "react-toastify";
 
 import { deleteMovie, updateMovie } from "@/utils/db/connectDB";
 
-export function SmallMovieCard({ movie, index, movies, setMovies }) {
+export function SmallMovieCard({ movie, index, movies, setMovies, userID }) {
   const [isLoading, setIsLoading] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
 
-  async function handleUpdateMovieStatus(movieData, newStatus) {
+  async function handleUpdateMovieStatus(movieData, newStatus, userID) {
     try {
       setIsUpdating(true);
 
@@ -21,7 +21,11 @@ export function SmallMovieCard({ movie, index, movies, setMovies }) {
         watched: newStatus === "watched" ? true : false,
       };
 
-      const { success, message } = await updateMovie(newMovie.id, newMovie);
+      const { success, message } = await updateMovie(
+        newMovie.id,
+        newMovie,
+        userID
+      );
 
       if (success) {
         toast.success(message);
@@ -47,13 +51,13 @@ export function SmallMovieCard({ movie, index, movies, setMovies }) {
     }
   }
 
-  async function handleDeleteMovie(id) {
+  async function handleDeleteMovie(id, userID) {
     try {
       setIsLoading(true);
 
       toast.promise(
         (async () => {
-          const { success, message } = await deleteMovie(id);
+          const { success, message } = await deleteMovie(id, userID);
           if (success) {
             setMovies(movies.filter((movie) => movie.id !== id));
           } else {
