@@ -1,15 +1,16 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 import { SmallMovieCard } from "@/app/smallMovieCard";
 import { Loader } from "@/components/loader";
-import { useLocalStorage } from "@/utils/localSrorage";
+import { useLocalStorage } from "@/utils/localStorage";
 import { getAllMovies, updateMovie, deleteMovie } from "@/utils/db/connectDB";
 
 export default function HomePage() {
   const [movies, setMovies] = useState([]);
   const [category, setCategory] = useState("watchlist");
   const [isLoading, setLoading] = useState(false);
+  // const [userID, setUserID] = useState("");
   const { userID } = useLocalStorage();
 
   useEffect(() => {
@@ -26,7 +27,7 @@ export default function HomePage() {
     }
 
     fetchMovies();
-  }, [updateMovie, deleteMovie]);
+  }, [userID]);
 
   let filteredMovies;
 
@@ -64,7 +65,6 @@ export default function HomePage() {
             {filteredMovies?.map((movie, index) => (
               <SmallMovieCard
                 key={movie.id}
-                userID={userID}
                 movie={movie}
                 index={index}
                 setMovies={setMovies}

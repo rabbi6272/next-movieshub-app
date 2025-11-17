@@ -9,9 +9,6 @@ import {
 } from "firebase/firestore";
 import { db } from "./firebaseConfig";
 
-// Collection name
-const MOVIES_COLLECTION = "movies";
-
 // Helper function to handle Firebase errors
 function handleFirebaseError(error, operation) {
   console.error(`Error ${operation}:`, error);
@@ -29,6 +26,9 @@ function handleFirebaseError(error, operation) {
 
 // Get all movies
 export async function getAllMovies(userID) {
+  if (!userID) {
+    throw new Error("User ID is required");
+  }
   try {
     const querySnapshot = await getDocs(collection(db, userID));
     const movies = [];
@@ -43,6 +43,9 @@ export async function getAllMovies(userID) {
 
 // Add a new movie
 export async function addMovie(movieData, userID) {
+  if (!userID) {
+    throw new Error("User ID is required");
+  }
   try {
     const docRef = await addDoc(collection(db, userID), movieData);
     return {
@@ -56,12 +59,14 @@ export async function addMovie(movieData, userID) {
 
 // Update movie by ID
 export async function updateMovie(movieId, updateData, userID) {
+  if (!userID) {
+    throw new Error("User ID is required");
+  }
   try {
     const movieRef = doc(db, userID, movieId);
     await updateDoc(movieRef, updateData);
 
     // Get the updated document
-    const updatedDoc = await getDoc(movieRef);
     return { success: true, message: "Movie updated successfully" };
   } catch (error) {
     handleFirebaseError(error, "updating movie");
@@ -70,6 +75,9 @@ export async function updateMovie(movieId, updateData, userID) {
 
 // Delete movie by ID
 export async function deleteMovie(movieId, userID) {
+  if (!userID) {
+    throw new Error("User ID is required");
+  }
   try {
     await deleteDoc(doc(db, userID, movieId));
     return {

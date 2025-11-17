@@ -7,12 +7,14 @@ import { motion } from "framer-motion";
 import { toast } from "react-toastify";
 
 import { deleteMovie, updateMovie } from "@/utils/db/connectDB";
+import { useLocalStorage } from "@/utils/localStorage";
 
-export function SmallMovieCard({ movie, index, movies, setMovies, userID }) {
+export function SmallMovieCard({ movie, index, movies, setMovies }) {
   const [isLoading, setIsLoading] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
+  const { userID } = useLocalStorage();
 
-  async function handleUpdateMovieStatus(movieData, newStatus, userID) {
+  async function handleUpdateMovieStatus(movieData, newStatus) {
     try {
       setIsUpdating(true);
 
@@ -20,29 +22,41 @@ export function SmallMovieCard({ movie, index, movies, setMovies, userID }) {
         ...movieData,
         watched: newStatus === "watched" ? true : false,
       };
-
-      const { success, message } = await updateMovie(
-        newMovie.id,
-        newMovie,
-        userID
+      toast.promise(
+        (async () => {
+          const { success, message } = await updateMovie(
+            newMovie.id,
+            newMovie,
+            userID
+          );
+          if (success) {
+            // Update local state
+            const updatedMovies = movies.map((m) =>
+              m.id === movie.id
+                ? {
+                    ...m,
+                    watched: newStatus === "watched",
+                    wantToWatch: newStatus === "watchlist",
+                  }
+                : m
+            );
+            setMovies(updatedMovies);
+          } else {
+            toast.error(message);
+          }
+          setIsLoading(false);
+          return message;
+        })(),
+        {
+          pending: "Updating movie...",
+          success: "Movie updated successfully!",
+          error: {
+            render({ data }) {
+              return data.message || "Failed to update movie!";
+            },
+          },
+        }
       );
-
-      if (success) {
-        toast.success(message);
-        // Update local state
-        const updatedMovies = movies.map((m) =>
-          m.id === movie.id
-            ? {
-                ...m,
-                watched: newStatus === "watched",
-                wantToWatch: newStatus === "watchlist",
-              }
-            : m
-        );
-        setMovies(updatedMovies);
-      } else {
-        toast.error(message);
-      }
     } catch (error) {
       toast.error("Failed to update movie status");
       console.error("Update error:", error);
@@ -51,7 +65,7 @@ export function SmallMovieCard({ movie, index, movies, setMovies, userID }) {
     }
   }
 
-  async function handleDeleteMovie(id, userID) {
+  async function handleDeleteMovie(id) {
     try {
       setIsLoading(true);
 
@@ -108,6 +122,10 @@ export function SmallMovieCard({ movie, index, movies, setMovies, userID }) {
           src={movie.Poster}
           alt={movie.Title}
           className="rounded-md object-cover"
+          loading="lazy" // ✅ Add lazy loading
+          quality={65} // ✅ Reduce quality slightly (default 75)
+          placeholder="blur" // ✅ Add blur placeholder
+          blurDataURL="data:image/png;base64,iVBORw0KG..." // ✅ Tiny base64 image
         />
       )}
 

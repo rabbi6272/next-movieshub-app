@@ -1,8 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
+import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyA8F7uZIng4N4qlxwK7Afl0G8kdvDCENt4",
   authDomain: "movies-hub-89d08.firebaseapp.com",
@@ -16,6 +15,15 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
+// Initialize Firebase Authentication
+if (typeof window !== "undefined") {
+  initializeAppCheck(app, {
+    provider: new ReCaptchaV3Provider(
+      "6Lcdxw8sAAAAAMpQTeySKzUNNsTRb3yxeRorE7vy"
+    ),
+    isTokenAutoRefreshEnabled: true, // Automatically refresh tokens
+  });
+}
 // Initialize Cloud Firestore and get a reference to the service
 export const db = getFirestore(app);
 

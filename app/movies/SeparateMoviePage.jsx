@@ -8,7 +8,7 @@ import { Loader } from "@/components/loader";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { addMovie } from "@/utils/db/connectDB";
-import { useLocalStorage } from "@/utils/localSrorage";
+import { useLocalStorage } from "@/utils/localStorage";
 
 export function SeparateMoviePage({
   selectedMovieId,
