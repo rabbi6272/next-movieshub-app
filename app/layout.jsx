@@ -58,8 +58,11 @@ export default function RootLayout({ children }) {
           rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20,400,0,0"
         />
+        <script src="https://cdn.lordicon.com/lordicon.js" defer></script>
       </head>
-      <body className={`${nunito.className} antialiased max-h-screen bg-black`}>
+      <body
+        className={`${nunito.className} antialiased max-h-screen bg-gray-50 text-gray-600`}
+      >
         <ToastContainer
           position="bottom-center"
           autoClose={1500}

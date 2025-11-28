@@ -2,7 +2,7 @@
 import Image from "next/image";
 import Head from "next/head";
 
-import { delay, motion } from "framer-motion";
+import { motion } from "framer-motion";
 
 import { Loader } from "@/components/loader";
 import { useEffect, useState } from "react";
@@ -190,20 +190,20 @@ export function SeparateMoviePage({
           <meta name="twitter:image" content={movie.Poster} />
         )}
       </Head>
-      <div className="relative my-3 p-2 md:p-3 w-[95%] md:w-[60%] lg:w-[45%] mx-auto rounded-lg bg-[#0d5c7f] flex flex-col items-center justify-between">
+      <div className="relative my-3 p-2 md:p-3 w-[95%] md:w-[60%] lg:w-[50%] mx-auto rounded-lg bg-white text-gray-500 flex flex-col items-center justify-between shadow-md">
         {loading && (
           <div className="h-full w-full grid place-items-center">
             <Loader />
           </div>
         )}
         <button
-          className="absolute top-[5px] left-[5px] md:top-[10px] md:left-[10px] h-[40px] w-[40px] rounded-full bg-[#23B1F3] active:scale-95 transition duration-300 grid place-items-center"
+          className="absolute top-[5px] left-[5px] md:top-[10px] md:left-[10px] h-[40px] w-[40px] rounded-full bg-gray-100 active:scale-95 transition duration-300 grid place-items-center cursor-pointer"
           onClick={() => {
             setSelectedMovieId("");
             setIsShowingMovies(!isShowingMovies);
           }}
         >
-          <span className="material-symbols-rounded text-gray-100">
+          <span className="material-symbols-rounded text-gray-700">
             arrow_back
           </span>
         </button>
@@ -228,12 +228,12 @@ export function SeparateMoviePage({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 1, delay: 0.2 }}
-              className="flex-1 text-gray-300 py-2 lg:py-4 mx-auto flex flex-col gap-2 items-center justify-center text-base"
+              className="flex-1 text-gray-500 py-2 lg:py-4 mx-auto flex flex-col gap-2 items-center justify-center text-base"
             >
-              <h1 className="text-2xl lg:text-3xl text-white font-nunito font-bold">
+              <h1 className="text-2xl lg:text-3xl text-gray-600 font-nunito font-bold">
                 {movie.Title}
               </h1>
-              <div className="flex gap-6">
+              <div className="w-full flex gap-6">
                 <div className="flex-1 text-right">
                   <span>⭐{movie.imdbRating}</span>
                   <br />
@@ -260,7 +260,7 @@ export function SeparateMoviePage({
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 1, delay: 0.4 }}
-                className="text-justify"
+                className="text-justify lg:px-4 xl:px-6"
               >
                 {movie.Plot}
               </motion.p>
@@ -273,13 +273,13 @@ export function SeparateMoviePage({
               className="flex gap-8 md:gap-12"
             >
               <button
-                className="ui-button rounded-full"
+                className="px-6 py-2.5 border border-gray-300 rounded-full hover:bg-gray-200 transition-colors duration-500 cursor-pointer"
                 onClick={handleAddToWatchlist}
               >
                 {isLoading ? "Adding..." : "Want to Watch ?"}
               </button>
               <button
-                className="ui-button rounded-full"
+                className="px-6 py-2.5 border border-gray-300 rounded-full hover:bg-gray-200 transition-colors duration-500 cursor-pointer"
                 onClick={handleAddToWatched}
               >
                 {isLoading2 ? "Adding..." : "Watched ?"}

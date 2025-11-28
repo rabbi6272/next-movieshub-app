@@ -9,19 +9,9 @@ import {
 } from "firebase/firestore";
 import { db } from "./firebaseConfig";
 
-// Helper function to handle Firebase errors
 function handleFirebaseError(error, operation) {
-  console.error(`Error ${operation}:`, error);
-
-  if (error.code === "permission-denied") {
-    const message = error.message.includes("API has not been used")
-      ? "Firestore API is not enabled. Please enable it in your Firebase console."
-      : "Firestore security rules are blocking this operation. Please check your security rules.";
-
-    throw new Error(`Firebase Error: ${message}`);
-  }
-
-  throw error;
+  console.error(error);
+  throw new Error(`${operation} failed: ${error.message}`);
 }
 
 // Get all movies

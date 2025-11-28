@@ -1,14 +1,12 @@
-// "use client";
+"use client";
 import { useEffect, useState } from "react";
 import { useMovieStore } from "../../store/store";
 
 export function useSearchMovies() {
+  const [movies, setMovies] = useState([]);
   const [query, setQuery] = useState("");
   const [isLoading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
-  const movies = useMovieStore((state) => state.movies);
-  const setMovies = useMovieStore((state) => state.setMovies);
 
   useEffect(() => {
     const controler = new AbortController();
@@ -48,5 +46,11 @@ export function useSearchMovies() {
     };
   }, [query]);
 
-  return { query, setQuery, movies, isLoading, error };
+  return {
+    query,
+    setQuery,
+    movies,
+    isLoading,
+    error,
+  };
 }

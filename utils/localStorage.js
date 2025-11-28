@@ -7,16 +7,14 @@ export function useLocalStorage() {
   useMemo(() => {
     if (typeof window !== "undefined") {
       const value = JSON.parse(localStorage.getItem("userID"));
-      if (value === null || value === undefined) {
-        // Generate a new random 7-character alphanumeric ID
-        const newID = Math.random().toString(36).substring(2, 9);
-        localStorage.setItem("userID", JSON.stringify(newID));
-        setValue(newID);
-      } else {
+      if (value) {
         setValue(value);
       }
     }
-  }, []);
+    if (value) {
+      localStorage.setItem("userID", JSON.stringify(value));
+    }
+  }, [value]);
 
-  return { userID: value };
+  return { userID: value, setUserID: setValue };
 }

@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
 
 const firebaseConfig = {
@@ -24,6 +25,9 @@ if (typeof window !== "undefined") {
     isTokenAutoRefreshEnabled: true, // Automatically refresh tokens
   });
 }
+
+// Initialize Firebase Authentication and get a reference to the service
+export const auth = getAuth(app);
 // Initialize Cloud Firestore and get a reference to the service
 export const db = getFirestore(app);
 
