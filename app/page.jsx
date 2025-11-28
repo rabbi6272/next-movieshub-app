@@ -27,6 +27,7 @@ export default function HomePage() {
   const [selectedMovieId, setSelectedMovieId] = useState("");
 
   const userID = useLocalStorage((state) => state.userID);
+  const setUserID = useLocalStorage((state) => state.setUserID);
 
   const { searchedMovies, searchLoading, searchError } = useSearchMovies();
 
@@ -43,6 +44,7 @@ export default function HomePage() {
   };
 
   useEffect(() => {
+    setUserID(JSON.parse(localStorage.getItem("userID")));
     fetchMovies();
   }, [userID]);
 

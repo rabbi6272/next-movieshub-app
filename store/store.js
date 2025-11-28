@@ -16,9 +16,8 @@ export const useMovieStore = create((set) => ({
 }));
 
 export const useLocalStorage = create((set) => ({
-  userID: JSON.parse(localStorage.getItem("userID") || null),
+  userID: null,
   setUserID: (userID) => {
     set({ userID });
-    localStorage.setItem("userID", JSON.stringify(userID));
   },
 }));

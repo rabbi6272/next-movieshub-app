@@ -22,16 +22,18 @@ export default function SignupForm() {
     event.preventDefault();
     const email = formData.email;
     const password = formData.password;
+    if (userID) {
+      toast.error("User is already logged in");
+      return;
+    }
     toast.promise(
       (async () => {
-        if (userID) {
-          throw new Error("User is already logged in");
-        }
         const userCredential = await createUserWithEmailAndPassword(
           auth,
           email,
           password
         );
+        localStorage.setItem("userID", JSON.stringify(userCredential.user.uid));
         setUserID(userCredential.user.uid);
       })(),
       {

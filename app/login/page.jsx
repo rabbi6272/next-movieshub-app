@@ -33,7 +33,7 @@ export default function LoginForm() {
           email,
           password
         );
-        // localStorage.setItem("userID", JSON.stringify(userCredential.user.uid));
+        localStorage.setItem("userID", JSON.stringify(userCredential.user.uid));
         setUserID(userCredential.user.uid);
       })(),
       {
