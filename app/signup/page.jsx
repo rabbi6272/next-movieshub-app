@@ -10,13 +10,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "react-toastify";
 
-import { useLocalStorage } from "@/utils/localStorage";
+import { useLocalStorage } from "@/store/store";
 
 export default function SignupForm() {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const router = useRouter();
 
-  const { userID, setUserID } = useLocalStorage();
+  const userID = useLocalStorage((state) => state.userID);
+  const setUserID = useLocalStorage((state) => state.setUserID);
   async function handleSubmit(event) {
     event.preventDefault();
     const email = formData.email;

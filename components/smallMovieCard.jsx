@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import { toast } from "react-toastify";
 
 import { deleteMovie, updateMovie } from "@/utils/db/connectDB";
-import { useLocalStorage } from "@/utils/localStorage";
+import { useLocalStorage } from "@/store/store";
 
 export function SmallMovieCard({
   movie,
@@ -18,7 +18,7 @@ export function SmallMovieCard({
 }) {
   const [isLoading, setIsLoading] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
-  const { userID } = useLocalStorage();
+  const userID = useLocalStorage((state) => state.userID);
 
   // async function handleUpdateMovieStatus(movieData, newStatus) {
   //   try {

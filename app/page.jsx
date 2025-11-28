@@ -14,7 +14,7 @@ import { SmallMovieCard } from "@/components/smallMovieCard";
 import { Loader } from "@/components/loader";
 import { SeparateMoviePage } from "../components/SeparateMoviePage";
 
-import { useLocalStorage } from "@/utils/localStorage";
+import { useLocalStorage } from "@/store/store";
 import { getAllMovies } from "@/utils/db/connectDB";
 import { useSearchMovies } from "@/utils/hooks/useSearchMovies";
 
@@ -26,7 +26,8 @@ export default function HomePage() {
   const [isShowingMovies, setIsShowingMovies] = useState(false);
   const [selectedMovieId, setSelectedMovieId] = useState("");
 
-  const { userID } = useLocalStorage();
+  const userID = useLocalStorage((state) => state.userID);
+
   const { searchedMovies, searchLoading, searchError } = useSearchMovies();
 
   const fetchMovies = async () => {

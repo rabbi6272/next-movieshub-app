@@ -9,8 +9,7 @@ import { Loader } from "@/components/loader";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { addMovie } from "@/utils/db/connectDB";
-import { useLocalStorage } from "@/utils/localStorage";
-
+import { useLocalStorage } from "@/store/store";
 export function SeparateMoviePage({
   selectedMovieId,
   setSelectedMovieId,
@@ -22,7 +21,7 @@ export function SeparateMoviePage({
   const [isLoading, setIsLoading] = useState(false);
   const [isLoading2, setIsLoading2] = useState(false);
 
-  const { userID } = useLocalStorage();
+  const userID = useLocalStorage((state) => state.userID);
 
   const router = useRouter();
 

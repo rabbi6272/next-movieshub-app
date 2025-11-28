@@ -9,28 +9,31 @@ import { auth } from "@/utils/db/firebaseConfig";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "react-toastify";
-
-import { useLocalStorage } from "@/utils/localStorage";
+import { useLocalStorage } from "@/store/store";
 
 export default function LoginForm() {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const router = useRouter();
 
-  const { userID, setUserID } = useLocalStorage();
+  const userID = useLocalStorage((state) => state.userID);
+  const setUserID = useLocalStorage((state) => state.setUserID);
+  console.log("userID", userID);
   async function handleSubmit(event) {
     event.preventDefault();
     const email = formData.email;
     const password = formData.password;
+    if (userID) {
+      toast.error("User is already logged in");
+      return;
+    }
     toast.promise(
       (async () => {
-        if (userID) {
-          throw new Error("User is already logged in");
-        }
         const userCredential = await signInWithEmailAndPassword(
           auth,
           email,
           password
         );
+        // localStorage.setItem("userID", JSON.stringify(userCredential.user.uid));
         setUserID(userCredential.user.uid);
       })(),
       {
