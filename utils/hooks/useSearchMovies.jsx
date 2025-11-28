@@ -1,56 +1,69 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useMovieStore } from "../../store/store";
 
 export function useSearchMovies() {
-  const [movies, setMovies] = useState([]);
-  const [query, setQuery] = useState("");
-  const [isLoading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const searchQuery = useMovieStore((state) => state.searchQuery);
+  const setSearchQuery = useMovieStore((state) => state.setSearchQuery);
+  const searchedMovies = useMovieStore((state) => state.searchedMovies);
+  const setSearchedMovies = useMovieStore((state) => state.setSearchedMovies);
+  const searchLoading = useMovieStore((state) => state.searchLoading);
+  const setSearchLoading = useMovieStore((state) => state.setSearchLoading);
+  const searchError = useMovieStore((state) => state.searchError);
+  const setSearchError = useMovieStore((state) => state.setSearchError);
 
   useEffect(() => {
     const controler = new AbortController();
     const signal = controler.signal;
 
     async function searchMovies() {
-      if (query === "") {
-        setError(null);
+      if (searchQuery === "") {
+        setSearchError(null);
+        setSearchedMovies([]);
+        setSearchLoading(false);
         return;
       }
 
       try {
-        setLoading(true);
-        setError(null);
-        setMovies([]);
+        setSearchLoading(true);
+        setSearchError(null);
+        setSearchedMovies([]);
         const response = await fetch(
-          `https://www.omdbapi.com/?s=${query}&apikey=5cc173f0`,
+          `https://www.omdbapi.com/?s=${searchQuery}&apikey=5cc173f0`,
           { signal }
         );
         const data = await response.json();
         if (data.Response === "True") {
-          setMovies([...data.Search]);
-          setError(null);
+          setSearchedMovies([...data.Search]);
+          setSearchError(null);
         } else {
-          setError("❌ Movie not found");
+          setSearchError("❌ Movie not found");
+          setSearchedMovies([]);
         }
       } catch (error) {
-        console.error(`Error occurred: ${error.message}`);
+        // Don't set error if request was aborted
+        if (error.name !== "AbortError" && !signal.aborted) {
+          console.error(`Error occurred:`, error);
+          setSearchError(`Error: ${error.message}`);
+        }
       } finally {
-        setLoading(false);
+        if (!signal.aborted) {
+          setSearchLoading(false);
+        }
       }
     }
 
     searchMovies();
     return () => {
-      controler.abort("Aborting in cleanup");
+      controler.abort();
     };
-  }, [query]);
+  }, [searchQuery, setSearchedMovies, setSearchLoading, setSearchError]);
 
   return {
-    query,
-    setQuery,
-    movies,
-    isLoading,
-    error,
+    query: searchQuery,
+    setQuery: setSearchQuery,
+    searchedMovies,
+    searchLoading,
+    searchError,
   };
 }

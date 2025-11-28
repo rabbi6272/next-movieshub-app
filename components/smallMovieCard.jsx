@@ -12,9 +12,6 @@ import { useLocalStorage } from "@/utils/localStorage";
 export function SmallMovieCard({
   movie,
   index,
-  movies,
-  setMovies,
-  selectedMovieId,
   setSelectedMovieId,
   isShowingMovies,
   setIsShowingMovies,
@@ -23,87 +20,87 @@ export function SmallMovieCard({
   const [isUpdating, setIsUpdating] = useState(false);
   const { userID } = useLocalStorage();
 
-  async function handleUpdateMovieStatus(movieData, newStatus) {
-    try {
-      setIsUpdating(true);
+  // async function handleUpdateMovieStatus(movieData, newStatus) {
+  //   try {
+  //     setIsUpdating(true);
 
-      const newMovie = {
-        ...movieData,
-        watched: newStatus === "watched" ? true : false,
-      };
-      toast.promise(
-        (async () => {
-          const { success, message } = await updateMovie(
-            newMovie.id,
-            newMovie,
-            userID
-          );
-          if (success) {
-            // Update local state
-            const updatedMovies = movies.map((m) =>
-              m.id === movie.id
-                ? {
-                    ...m,
-                    watched: newStatus === "watched",
-                    wantToWatch: newStatus === "watchlist",
-                  }
-                : m
-            );
-            setMovies(updatedMovies);
-          } else {
-            toast.error(message);
-          }
-          setIsLoading(false);
-          return message;
-        })(),
-        {
-          pending: "Updating movie...",
-          success: "Movie updated successfully!",
-          error: {
-            render({ data }) {
-              return data.message || "Failed to update movie!";
-            },
-          },
-        }
-      );
-    } catch (error) {
-      toast.error("Failed to update movie status");
-      console.error("Update error:", error);
-    } finally {
-      setIsUpdating(false);
-    }
-  }
+  //     const newMovie = {
+  //       ...movieData,
+  //       watched: newStatus === "watched" ? true : false,
+  //     };
+  //     toast.promise(
+  //       (async () => {
+  //         const { success, message } = await updateMovie(
+  //           newMovie.id,
+  //           newMovie,
+  //           userID
+  //         );
+  //         if (success) {
+  //           // Update local state
+  //           const updatedMovies = movies.map((m) =>
+  //             m.id === movie.id
+  //               ? {
+  //                   ...m,
+  //                   watched: newStatus === "watched",
+  //                   wantToWatch: newStatus === "watchlist",
+  //                 }
+  //               : m
+  //           );
+  //           setMovies(updatedMovies);
+  //         } else {
+  //           toast.error(message);
+  //         }
+  //         setIsLoading(false);
+  //         return message;
+  //       })(),
+  //       {
+  //         pending: "Updating movie...",
+  //         success: "Movie updated successfully!",
+  //         error: {
+  //           render({ data }) {
+  //             return data.message || "Failed to update movie!";
+  //           },
+  //         },
+  //       }
+  //     );
+  //   } catch (error) {
+  //     toast.error("Failed to update movie status");
+  //     console.error("Update error:", error);
+  //   } finally {
+  //     setIsUpdating(false);
+  //   }
+  // }
 
-  async function handleDeleteMovie(id) {
-    try {
-      setIsLoading(true);
+  // async function handleDeleteMovie(id) {
+  //   try {
+  //     setIsLoading(true);
 
-      toast.promise(
-        (async () => {
-          const { success, message } = await deleteMovie(id, userID);
-          if (success) {
-            setMovies(movies.filter((movie) => movie.id !== id));
-          } else {
-            throw new Error(message);
-          }
-          setIsLoading(false);
-          return message;
-        })(),
-        {
-          pending: "Deleting movie...",
-          success: "Movie deleted successfully!",
-          error: {
-            render({ data }) {
-              return data.message || "Failed to delete movie!";
-            },
-          },
-        }
-      );
-    } catch (error) {
-      setIsLoading(false);
-      toast.error(error.message);
-    }
-  }
+  //     toast.promise(
+  //       (async () => {
+  //         const { success, message } = await deleteMovie(id, userID);
+  //         if (success) {
+  //           setMovies(movies.filter((movie) => movie.id !== id));
+  //         } else {
+  //           throw new Error(message);
+  //         }
+  //         setIsLoading(false);
+  //         return message;
+  //       })(),
+  //       {
+  //         pending: "Deleting movie...",
+  //         success: "Movie deleted successfully!",
+  //         error: {
+  //           render({ data }) {
+  //             return data.message || "Failed to delete movie!";
+  //           },
+  //         },
+  //       }
+  //     );
+  //   } catch (error) {
+  //     setIsLoading(false);
+  //     toast.error(error.message);
+  //   }
+  // }
 
   return (
     <motion.div

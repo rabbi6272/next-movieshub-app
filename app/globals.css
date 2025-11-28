@@ -214,56 +214,6 @@ body {
   }
 }
 
-/* Uiverse button */
-.ui-button {
-  --color: #23b1f3;
-  font-family: inherit;
-  display: inline-block;
-  width: 9em;
-  height: 2.6em;
-  line-height: 2.5em;
-
-  position: relative;
-  cursor: pointer;
-  overflow: hidden;
-  border: 2px solid var(--color);
-  transition: color 0.5s;
-  z-index: 1;
-  font-size: 17px;
-  font-weight: 500;
-  color: var(--color);
-}
-
-.ui-button:before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  background: var(--color);
-  height: 150px;
-  width: 200px;
-  border-radius: 50%;
-}
-
-.ui-button:hover {
-  color: #ececec;
-}
-
-.ui-button:before {
-  top: 100%;
-  left: 100%;
-  transition: all 0.7s;
-}
-
-.ui-button:hover:before {
-  top: -30px;
-  left: -30px;
-}
-
-.ui-button:active:before {
-  background: #3a0ca3;
-  transition: background 0s;
-}
-
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -343,4 +293,18 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+.show {
+  transform: translateY(0);
+  animation-duration: 400ms;
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: forwards;
+}
+
+.hide {
+  transform: translateY(-100%);
+  animation-duration: 400ms;
+  animation-timing-function: ease-in-out;
+  animation-fill-mode: forwards;
 }

@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import Head from "next/head";
+import { useRouter } from "next/navigation";
 
 import { motion } from "framer-motion";
 
@@ -20,7 +21,10 @@ export function SeparateMoviePage({
   const [loading, setLoading] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoading2, setIsLoading2] = useState(false);
+
   const { userID } = useLocalStorage();
+
+  const router = useRouter();
 
   useEffect(() => {
     fetch(`https://www.omdbapi.com/?i=${selectedMovieId}&apikey=5cc173f0`, {
@@ -34,6 +38,10 @@ export function SeparateMoviePage({
   }, [selectedMovieId]);
 
   async function handleAddToWatchlist() {
+    if (!userID) {
+      toast.error("Please login to add to watchlist");
+      router.push("/login");
+    }
     try {
       setIsLoading(true);
       const movieData = { ...movie, watched: false };
@@ -70,6 +78,10 @@ export function SeparateMoviePage({
     }
   }
   async function handleAddToWatched() {
+    if (!userID) {
+      toast.error("Please login to add to watchlist");
+      router.push("/login");
+    }
     try {
       setIsLoading2(true);
       const movieData = { ...movie, watched: true };
@@ -203,7 +215,7 @@ export function SeparateMoviePage({
             setIsShowingMovies(!isShowingMovies);
           }}
         >
-          <span className="material-symbols-rounded text-gray-700">
+          <span className="material-symbols-outlined text-gray-700">
             arrow_back
           </span>
         </button>

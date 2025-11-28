@@ -54,9 +54,10 @@ export default function RootLayout({ children }) {
         />
         <meta name="twitter:image" content="/icon.png" />
         <link rel="icon" href="/icon.png" />
+
         <link
           rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20,400,0,0"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
         />
         <script src="https://cdn.lordicon.com/lordicon.js" defer></script>
       </head>
