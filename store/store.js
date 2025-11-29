@@ -1,6 +1,8 @@
 import { create } from "zustand";
 
 export const useMovieStore = create((set) => ({
+  savedMovies: [],
+  setSavedMovies: (savedMovies) => set({ savedMovies }),
   movies: [],
   setMovies: (movies) => set({ movies }),
 

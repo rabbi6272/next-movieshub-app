@@ -124,7 +124,7 @@ export function SmallMovieCard({
           className="rounded-md object-cover mx-auto"
         />
       ) : (
-        <p className="text-red-400 py-5">Image not available</p>
+        <p className="text-red-400 py-5 mx-auto">Image not available</p>
       )}
 
       <div className="p-2 w-full flex flex-col gap-0.5 items-center">

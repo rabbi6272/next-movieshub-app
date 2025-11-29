@@ -37,7 +37,7 @@ export function useSearchMovies() {
           setSearchedMovies([...data.Search]);
           setSearchError(null);
         } else {
-          setSearchError("❌ Movie not found");
+          setSearchError("Movie not found");
           setSearchedMovies([]);
         }
       } catch (error) {

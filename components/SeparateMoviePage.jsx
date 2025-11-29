@@ -9,7 +9,8 @@ import { Loader } from "@/components/loader";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { addMovie } from "@/utils/db/connectDB";
-import { useLocalStorage } from "@/store/store";
+import { useLocalStorage, useMovieStore } from "@/store/store";
+
 export function SeparateMoviePage({
   selectedMovieId,
   setSelectedMovieId,
@@ -21,11 +22,21 @@ export function SeparateMoviePage({
   const [isLoading, setIsLoading] = useState(false);
   const [isLoading2, setIsLoading2] = useState(false);
 
-  const userID = useLocalStorage((state) => state.userID);
+  const userID = useMovieStore((state) => state.userID);
+  const savedMovies = useMovieStore((state) => state.savedMovies);
 
   const router = useRouter();
 
+  console.log("selectedMovie", movie);
+
   useEffect(() => {
+    setLoading(true);
+    if (!selectedMovieId) return;
+    if (savedMovies.find((movie) => movie.imdbID === selectedMovieId)) {
+      setMovie(savedMovies.find((movie) => movie.imdbID === selectedMovieId));
+      setLoading(false);
+      return;
+    }
     fetch(`https://www.omdbapi.com/?i=${selectedMovieId}&apikey=5cc173f0`, {
       cache: "force-cache",
     })
@@ -201,7 +212,7 @@ export function SeparateMoviePage({
           <meta name="twitter:image" content={movie.Poster} />
         )}
       </Head>
-      <div className="relative my-3 p-2 md:p-3 w-[95%] md:w-[60%] lg:w-[50%] mx-auto rounded-lg bg-white text-gray-500 flex flex-col items-center justify-between shadow-md">
+      <div className="relative my-4 p-2 md:p-3 w-[95%] md:w-[60%] lg:w-[50%]  mx-auto rounded-lg bg-white text-gray-500 flex flex-col items-center justify-between shadow-md">
         {loading && (
           <div className="h-full w-full grid place-items-center">
             <Loader />
@@ -281,16 +292,24 @@ export function SeparateMoviePage({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 1, delay: 0.6 }}
-              className="flex gap-8 md:gap-12"
+              className="flex gap-8 md:gap-10 text-gray-700"
             >
               <button
-                className="px-6 py-2.5 border border-gray-300 rounded-full hover:bg-gray-200 transition-colors duration-500 cursor-pointer"
+                className={`px-6 py-2.5 border border-gray-300 rounded-full hover:bg-gray-300 transition-colors duration-500 ${
+                  movie?.watched === false
+                    ? "bg-gray-300 cursor-not-allowed "
+                    : ""
+                }`}
                 onClick={handleAddToWatchlist}
               >
                 {isLoading ? "Adding..." : "Want to Watch ?"}
               </button>
               <button
-                className="px-6 py-2.5 border border-gray-300 rounded-full hover:bg-gray-200 transition-colors duration-500 cursor-pointer"
+                className={`px-6 py-2.5 border border-gray-300 rounded-full hover:bg-gray-300 transition-colors duration-500 ${
+                  movie?.watched === true
+                    ? "bg-gray-300 cursor-not-allowed"
+                    : ""
+                }`}
                 onClick={handleAddToWatched}
               >
                 {isLoading2 ? "Adding..." : "Watched ?"}
