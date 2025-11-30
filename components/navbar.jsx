@@ -1,9 +1,9 @@
 "use client";
+import { useState } from "react";
+
 import { ttTrailers } from "@/app/ui/fonts";
 
 import { useSearchMovies } from "@/utils/hooks/useSearchMovies";
-import Image from "next/image";
-import { useState } from "react";
 
 export default function Navbar() {
   const { query, setQuery } = useSearchMovies();
@@ -18,7 +18,7 @@ export default function Navbar() {
 function SmallNavbar({ query, setQuery }) {
   const [isOpen, setIsOpen] = useState(false);
   return (
-    <div className="sticky top-0 z-50 md:hidden bg-white shadow">
+    <div className="sticky top-0 z-50 md:hidden bg-white shadow-md">
       <nav className="relative h-[70px]  w-full flex items-center justify-between px-4 md:px-8 lg:px-14 ">
         <h1
           className={`${ttTrailers.className} italic font-extrabold text-gray-800 text-3xl `}
@@ -66,7 +66,7 @@ function SmallNavbar({ query, setQuery }) {
 
 function LargeNavbar({ query, setQuery }) {
   return (
-    <nav className="hidden md:sticky top-0 z-20 h-[70px] bg-white w-full md:flex items-center justify-between md:px-10 lg:px-15 xl:px-20 shadow">
+    <nav className="hidden md:sticky top-0 z-20 h-[70px] bg-white w-full md:flex items-center justify-between md:px-10 lg:px-15 xl:px-20 shadow-md">
       <h1
         className={`${ttTrailers.className} italic font-extrabold text-gray-800 text-3xl `}
       >

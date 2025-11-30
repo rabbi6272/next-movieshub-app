@@ -1,7 +1,8 @@
 import { Nunito, Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/navbar";
-import { Slide, ToastContainer } from "react-toastify";
+import { Toaster } from "react-hot-toast";
+import Link from "next/link";
 
 const nunito = Nunito({
   subsets: ["latin"],
@@ -62,21 +63,30 @@ export default function RootLayout({ children }) {
         <script src="https://cdn.lordicon.com/lordicon.js" defer></script>
       </head>
       <body
-        className={`${nunito.className} antialiased max-h-screen bg-gray-50 text-gray-600`}
+        className={`${nunito.className} antialiased min-h-screen bg-gray-50 text-gray-600`}
       >
-        <ToastContainer
-          position="bottom-center"
-          autoClose={1500}
-          hideProgressBar={false}
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover={false}
-          theme="dark"
-          transition={Slide}
+        <Toaster
+          position="top-center"
+          toastOptions={{
+            duration: 1500,
+          }}
         />
         <Navbar />
-        <main>{children}</main>
+        <main className="min-h-[calc(100vh-70px-32px)]">{children}</main>
+
+        <footer>
+          <p className="text-sm text-gray-500 text-center pb-3">
+            Developed with ❤️ by{" "}
+            <Link
+              href={"https://github.com/rabbi6272"}
+              target="_blank"
+              className="hover:underline"
+            >
+              {" "}
+              Rabbi
+            </Link>
+          </p>
+        </footer>
       </body>
     </html>
   );

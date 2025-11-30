@@ -8,7 +8,7 @@ import { auth } from "@/utils/db/firebaseConfig";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import { useLocalStorage } from "@/store/store";
 
 export default function LoginForm() {
@@ -17,7 +17,7 @@ export default function LoginForm() {
 
   const userID = useLocalStorage((state) => state.userID);
   const setUserID = useLocalStorage((state) => state.setUserID);
-  console.log("userID", userID);
+
   async function handleSubmit(event) {
     event.preventDefault();
     const email = formData.email;
@@ -26,41 +26,32 @@ export default function LoginForm() {
       toast.error("User is already logged in");
       return;
     }
-    toast.promise(
-      (async () => {
-        const userCredential = await signInWithEmailAndPassword(
-          auth,
-          email,
-          password
-        );
+    const loginPromise = signInWithEmailAndPassword(auth, email, password).then(
+      (userCredential) => {
         localStorage.setItem("userID", JSON.stringify(userCredential.user.uid));
         setUserID(userCredential.user.uid);
-      })(),
-      {
-        pending: "Logging up...",
-        success: "Logged up successfully!",
-        error: {
-          render({ data }) {
-            const errorMessage =
-              data?.customData?._tokenResponse?.error?.message || // Try nested error
-              data?.code
-                ?.replace("auth/", "")
-                .replace(/-/g, "_")
-                .toUpperCase() || // Convert code to message format
-              data?.message ||
-              "Log in failed!";
-
-            // Format the message to be user-friendly
-            const formattedMessage = errorMessage
-              .replace(/_/g, " ")
-              .toLowerCase()
-              .replace(/^\w/, (c) => c.toUpperCase());
-
-            return formattedMessage;
-          },
-        },
+        return userCredential;
       }
     );
+
+    toast.promise(loginPromise, {
+      loading: "Logging in...",
+      success: "Logged in successfully!",
+      error: (err) => {
+        const errorMessage =
+          err?.customData?._tokenResponse?.error?.message ||
+          err?.code?.replace("auth/", "").replace(/-/g, "_").toUpperCase() ||
+          err?.message ||
+          "Log in failed!";
+
+        const formattedMessage = errorMessage
+          .replace(/_/g, " ")
+          .toLowerCase()
+          .replace(/^\w/, (c) => c.toUpperCase());
+
+        return formattedMessage;
+      },
+    });
 
     setFormData({ email: "", password: "" });
     router.push("/");
@@ -70,7 +61,7 @@ export default function LoginForm() {
     <div className="flex items-center justify-center h-[calc(100vh-70px)] px-4 md:px-0">
       <form
         onSubmit={handleSubmit}
-        className="space-y-3 max-w-full md:w-1/3 lg:w-1/4 p-5 bg-white rounded-lg"
+        className="space-y-3 max-w-full md:w-1/3 lg:w-1/4 p-5 bg-white shadow-md rounded-lg"
       >
         <h1 className="text-2xl text-gray-700 font-bold text-center">Log In</h1>
         <label htmlFor="email" className="text-sm text-gray-600">

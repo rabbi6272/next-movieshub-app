@@ -8,7 +8,7 @@ import { auth } from "@/utils/db/firebaseConfig";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 
 import { useLocalStorage } from "@/store/store";
 
@@ -18,6 +18,7 @@ export default function SignupForm() {
 
   const userID = useLocalStorage((state) => state.userID);
   const setUserID = useLocalStorage((state) => state.setUserID);
+
   async function handleSubmit(event) {
     event.preventDefault();
     const email = formData.email;
@@ -26,41 +27,34 @@ export default function SignupForm() {
       toast.error("User is already logged in");
       return;
     }
-    toast.promise(
-      (async () => {
-        const userCredential = await createUserWithEmailAndPassword(
-          auth,
-          email,
-          password
-        );
-        localStorage.setItem("userID", JSON.stringify(userCredential.user.uid));
-        setUserID(userCredential.user.uid);
-      })(),
-      {
-        pending: "Signing up...",
-        success: "Signed up successfully!",
-        error: {
-          render({ data }) {
-            const errorMessage =
-              data?.customData?._tokenResponse?.error?.message || // Try nested error
-              data?.code
-                ?.replace("auth/", "")
-                .replace(/-/g, "_")
-                .toUpperCase() || // Convert code to message format
-              data?.message ||
-              "Sign up failed!";
+    const signupPromise = createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    ).then((userCredential) => {
+      localStorage.setItem("userID", JSON.stringify(userCredential.user.uid));
+      setUserID(userCredential.user.uid);
+      return userCredential;
+    });
 
-            // Format the message to be user-friendly
-            const formattedMessage = errorMessage
-              .replace(/_/g, " ")
-              .toLowerCase()
-              .replace(/^\w/, (c) => c.toUpperCase());
+    toast.promise(signupPromise, {
+      loading: "Signing up...",
+      success: "Signed up successfully!",
+      error: (err) => {
+        const errorMessage =
+          err?.customData?._tokenResponse?.error?.message ||
+          err?.code?.replace("auth/", "").replace(/-/g, "_").toUpperCase() ||
+          err?.message ||
+          "Sign up failed!";
 
-            return formattedMessage;
-          },
-        },
-      }
-    );
+        const formattedMessage = errorMessage
+          .replace(/_/g, " ")
+          .toLowerCase()
+          .replace(/^\w/, (c) => c.toUpperCase());
+
+        return formattedMessage;
+      },
+    });
 
     setFormData({ email: "", password: "" });
     router.push("/");
@@ -70,7 +64,7 @@ export default function SignupForm() {
     <div className="flex items-center justify-center h-[calc(100vh-70px)] px-4 md:px-0">
       <form
         onSubmit={handleSubmit}
-        className="space-y-3 max-w-full md:w-1/3 lg:w-1/4 p-5 bg-white rounded-lg"
+        className="space-y-3 max-w-full md:w-[50%] lg:w-[40%] xl:w-[30%] p-5 bg-white shadow-md rounded-lg"
       >
         <h1 className="text-2xl text-gray-700 font-bold text-center">
           Sign Up

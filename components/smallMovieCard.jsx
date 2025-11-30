@@ -4,7 +4,7 @@ import { useState } from "react";
 
 import { motion } from "framer-motion";
 
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 
 import { deleteMovie, updateMovie } from "@/utils/db/connectDB";
 import { useLocalStorage } from "@/store/store";

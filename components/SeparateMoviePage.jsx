@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 
 import { Loader } from "@/components/loader";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import { addMovie } from "@/utils/db/connectDB";
 import { useLocalStorage, useMovieStore } from "@/store/store";
 
@@ -22,12 +22,10 @@ export function SeparateMoviePage({
   const [isLoading, setIsLoading] = useState(false);
   const [isLoading2, setIsLoading2] = useState(false);
 
-  const userID = useMovieStore((state) => state.userID);
+  const userID = useLocalStorage((state) => state.userID);
   const savedMovies = useMovieStore((state) => state.savedMovies);
 
   const router = useRouter();
-
-  console.log("selectedMovie", movie);
 
   useEffect(() => {
     setLoading(true);
@@ -57,36 +55,19 @@ export function SeparateMoviePage({
       const movieData = { ...movie, watched: false };
       const { success, message } = await addMovie(movieData, userID);
       if (success) {
-        toast.success(message, {
-          position: "bottom-center",
-          autoClose: 1500,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: true,
-        });
+        toast.success(message);
         setSelectedMovieId("");
         setIsShowingMovies(!isShowingMovies);
       } else {
-        toast.error(message, {
-          position: "bottom-center",
-          autoClose: 1500,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: true,
-        });
+        toast.error(message);
       }
     } catch (error) {
-      toast.error(error.message, {
-        position: "bottom-center",
-        autoClose: 1500,
-        closeOnClick: false,
-        pauseOnHover: true,
-        draggable: true,
-      });
+      toast.error(error.message);
     } finally {
       setIsLoading(false);
     }
   }
+
   async function handleAddToWatched() {
     if (!userID) {
       toast.error("Please login to add to watchlist");
@@ -97,30 +78,14 @@ export function SeparateMoviePage({
       const movieData = { ...movie, watched: true };
       const { success, message } = await addMovie(movieData, userID);
       if (success) {
-        toast.success(message, {
-          position: "bottom-center",
-          autoClose: 1500,
-          closeOnClick: false,
-          draggable: true,
-        });
+        toast.success(message);
         setSelectedMovieId("");
         setIsShowingMovies(!isShowingMovies);
       } else {
-        toast.error(message, {
-          position: "bottom-center",
-          autoClose: 1500,
-          closeOnClick: false,
-          draggable: true,
-        });
+        toast.error(message);
       }
     } catch (error) {
-      toast.error(error.message, {
-        position: "bottom-center",
-        autoClose: 1500,
-        closeOnClick: false,
-        pauseOnHover: true,
-        draggable: true,
-      });
+      toast.error(error.message);
     } finally {
       setIsLoading2(false);
     }
@@ -212,6 +177,7 @@ export function SeparateMoviePage({
           <meta name="twitter:image" content={movie.Poster} />
         )}
       </Head>
+
       <div className="relative my-4 p-2 md:p-3 w-[95%] md:w-[60%] lg:w-[50%]  mx-auto rounded-lg bg-white text-gray-500 flex flex-col items-center justify-between shadow-md">
         {loading && (
           <div className="h-full w-full grid place-items-center">
