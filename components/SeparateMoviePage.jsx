@@ -13,6 +13,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { getMovieDetails, getTVDetails, getPosterURL, getBackdropURL, normalizeMovieForCard } from "@/api/tmdb";
 import TrailerModal from "./TrailerModal";
 import SimilarMovies from "./SimilarMovies";
+import { AddToPlaylistModal } from "./playlists/AddToPlaylistModal";
+import { Button } from "./ui/Button";
 
 function DetailSkeleton() {
   return (
@@ -47,6 +49,7 @@ export function SeparateMoviePage({ contentId, mediaType = "movie" }) {
   const [isLoading, setIsLoading] = useState(false);
   const [isLoading2, setIsLoading2] = useState(false);
   const [showTrailer, setShowTrailer] = useState(false);
+  const [showPlaylistModal, setShowPlaylistModal] = useState(false);
 
   const { userID } = useAuth();
   const savedMovies = useMovieStore((state) => state.savedMovies);
@@ -102,6 +105,26 @@ export function SeparateMoviePage({ contentId, mediaType = "movie" }) {
   const isWatchlisted = savedMovie && savedMovie.watched === false;
   const isWatched = savedMovie && savedMovie.watched === true;
 
+  const playlistItem = {
+    tmdbId: Number(content.id ?? content.tmdbId),
+    media_type: mediaType,
+    title,
+    poster_path: content.poster_path || null,
+    backdrop_path: content.backdrop_path || null,
+    overview: content.overview ?? null,
+    vote_average: content.vote_average ?? null,
+    release_date: content.release_date || content.first_air_date || null,
+  };
+
+  function handleOpenPlaylistModal() {
+    if (!userID) {
+      toast.error("Please login to add to playlists");
+      router.push("/login");
+      return;
+    }
+    setShowPlaylistModal(true);
+  }
+
   async function handleAddToWatchlist() {
     if (!userID) {
       toast.error("Please login to add to watchlist");
@@ -152,6 +175,7 @@ export function SeparateMoviePage({ contentId, mediaType = "movie" }) {
       toast.error(error.message);
     } finally {
       setIsLoading(false);
+      router.push('/')
     }
   }
 
@@ -206,6 +230,7 @@ export function SeparateMoviePage({ contentId, mediaType = "movie" }) {
       toast.error(error.message);
     } finally {
       setIsLoading2(false);
+      router.push('/')
     }
   }
 
@@ -229,6 +254,8 @@ export function SeparateMoviePage({ contentId, mediaType = "movie" }) {
       }
     } catch (error) {
       toast.error(error.message);
+    } finally {
+      router.push('/')
     }
   }
 
@@ -239,7 +266,7 @@ export function SeparateMoviePage({ contentId, mediaType = "movie" }) {
   return (
     <div className="w-full min-h-[calc(100vh-102px)] bg-gray-50">
       {/* Backdrop Hero */}
-      <div className="relative w-full h-[35vh] md:h-[45vh] lg:h-[50vh] overflow-hidden">
+      <div className="relative w-full h-[40vh] md:h-[50vh] lg:h-[60vh] overflow-hidden">
         {backdropURL ? (
           <Image
             fill
@@ -253,11 +280,11 @@ export function SeparateMoviePage({ contentId, mediaType = "movie" }) {
           <div className="w-full h-full bg-gradient-to-br from-gray-800 to-gray-900" />
         )}
         {/* Gradient overlays */}
-        <div className="absolute inset-0 bg-gradient-to-t from-gray-50 via-gray-50/60 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/30 to-transparent" />
+        <div className="absolute bottom-0 h-[20%] md:h-[30%] w-full bg-gradient-to-t from-white/40 to-transparent" />
+        {/* <div className="absolute inset-0 blur-sm" /> */}
 
         {/* Top bar */}
-        <div className="absolute top-0 left-0 right-0 z-20 p-3 md:p-5 flex items-center justify-between">
+        <div className="absolute top-0 left-0 right-0 p-3 md:p-5 flex items-center justify-between">
           <button
             className="h-10 w-10 rounded-full bg-black/40 backdrop-blur-sm hover:bg-black/60 active:scale-95 transition-all duration-200 grid place-items-center cursor-pointer"
             onClick={() => router.back()}
@@ -304,10 +331,10 @@ export function SeparateMoviePage({ contentId, mediaType = "movie" }) {
           </div>
 
           {/* Info */}
-          <div className="flex-1 pt-2 md:pt-12">
+          <div className="flex-1 pt-2 sm:pt-8 md:pt-16 ">
             {/* Title + badge */}
             <div className="relative">
-              <h1 className="text-center text-3xl md:text-4xl lg:text-5xl text-gray-900 font-nunito font-extrabold leading-tight">
+              <h1 className="text-center md:text-left text-3xl md:text-4xl lg:text-5xl text-black font-nunito font-extrabold leading-tight">
                 {title}
               </h1>
               {mediaType === "tv" && (
@@ -453,27 +480,13 @@ export function SeparateMoviePage({ contentId, mediaType = "movie" }) {
 
             {/* Action Buttons */}
             <div className="flex flex-col gap-3 mt-8">
-              {videoTrailerKey && (
-                <button
-                  onClick={() => setShowTrailer(true)}
-                  className="flex items-center justify-center gap-1 lg:gap-2 px-4 lg:px-6 py-3 rounded-full font-semibold text-sm transition-all duration-200 cursor-pointer shadow-md shadow-gray-900/20 bg-blue-600 text-white hover:bg-blue-700 active:scale-95"
-                >
-                  <span className="material-symbols-outlined text-lg">
-                    play_arrow
-                  </span>
-                  Play Trailer
-                </button>
-              )}
-
               <div className="flex gap-3">
-                <button
+                <Button
                   disabled={isWatchlisted}
                   onClick={handleAddToWatchlist}
-                  className={`flex items-center gap-1 lg:gap-2 px-4 lg:px-6 py-3 rounded-full font-semibold text-sm transition-all duration-200 cursor-pointer shadow-md shadow-gray-900/20
-                  ${isWatchlisted
-                      ? "bg-black text-white cursor-not-allowed"
-                      : "bg-transparent border border-gray-600 text-black hover:bg-gray-800 active:scale-95 "
-                    }`}
+                  varient={isWatchlisted ? "primary" : "outline"}
+                  size="lg"
+                  className="flex-1 flex items-center justify-center gap-2"
                 >
                   {isLoading ? (
                     <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -483,16 +496,14 @@ export function SeparateMoviePage({ contentId, mediaType = "movie" }) {
                     </span>
                   )}
                   {isWatchlisted ? "In Watchlist" : "Want to Watch"}
-                </button>
+                </Button>
 
-                <button
+                <Button
                   disabled={isWatched}
                   onClick={handleAddToWatched}
-                  className={`flex items-center gap-1 lg:gap-2 px-4 lg:px-6 py-3 rounded-full font-semibold text-sm transition-all duration-200 cursor-pointer shadow-md shadow-gray-900/20
-                  ${isWatched
-                      ? "bg-black text-white cursor-not-allowed"
-                      : "bg-transparent border border-gray-600 text-black hover:bg-gray-800 active:scale-95 "
-                    }`}
+                  className="flex-1 flex items-center justify-center gap-2"
+                  size="lg"
+                  varient={isWatched ? "primary" : "outline"}
                 >
                   {isLoading2 ? (
                     <span className="w-4 h-4 border-2 border-gray-400/30 border-t-gray-600 rounded-full animate-spin" />
@@ -502,8 +513,33 @@ export function SeparateMoviePage({ contentId, mediaType = "movie" }) {
                     </span>
                   )}
                   {isWatched ? "Already Watched" : "Mark as Watched"}
-                </button>
+                </Button>
               </div>
+
+              {videoTrailerKey && (
+                <Button
+                  onClick={() => setShowTrailer(true)}
+                  varient="outline"
+                  size="lg"
+                  className="flex-1 flex items-center justify-center gap-2"
+                >
+                  <span className="material-symbols-outlined text-lg">
+                    play_arrow
+                  </span>
+                  Play Trailer
+                </Button>
+              )}
+
+              <Button
+                onClick={handleOpenPlaylistModal}
+                className="flex-1 flex items-center justify-center gap-2"
+                size="lg"
+                varient="outline">
+                <span className="material-symbols-outlined text-lg">
+                  playlist_add
+                </span>
+                Add to Playlist
+              </Button>
             </div>
           </div>
         </div>
@@ -515,6 +551,12 @@ export function SeparateMoviePage({ contentId, mediaType = "movie" }) {
 
       {showTrailer && videoTrailerKey && (
         <TrailerModal videoKey={videoTrailerKey} onClose={() => setShowTrailer(false)} />
+      )}
+      {showPlaylistModal && (
+        <AddToPlaylistModal
+          item={playlistItem}
+          onClose={() => setShowPlaylistModal(false)}
+        />
       )}
     </div>
   );

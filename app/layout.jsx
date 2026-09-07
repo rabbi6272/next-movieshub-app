@@ -61,7 +61,7 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body
-        className={`${nunito.className} antialiased bg-gray-50 text-gray-600 bg-gray-100`}
+        className={`${nunito.className} antialiased bg-gray-50 text-gray-700`}
       >
         <Providers>
           <Toaster
@@ -76,7 +76,7 @@ export default function RootLayout({ children }) {
           </main>
 
           <footer>
-            <p className="text-sm text-gray-500 text-center pb-3">
+            <p className="text-sm text-gray-500 text-center mt-4 pb-3">
               Developed with ❤️ by{" "}
               <Link
                 href={"https://github.com/rabbi6272"}

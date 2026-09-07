@@ -1,0 +1,54 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isLoggedIn() {
+      return request.auth != null;
+    }
+
+    function isOwnerOf(userId) {
+      return isLoggedIn() && request.auth.uid == userId;
+    }
+
+    function playlistDoc(playlistId) {
+      return get(/databases/$(database)/documents/playlists/$(playlistId));
+    }
+
+    function isSharedPlaylist(playlistId) {
+      let data = playlistDoc(playlistId).data;
+      return data != null
+        && data.shareToken != null
+        && exists(/databases/$(database)/documents/shares/$(data.shareToken));
+    }
+
+    // Existing per-user saved-movies collections (named after the Firebase UID).
+    match /{userId} {
+      allow read, write: if isOwnerOf(userId);
+    }
+
+    // Share links: public read by exact token, writes only by the owner.
+    match /shares/{token} {
+      allow get: if true;
+      allow list: if isLoggedIn();
+      allow create: if isOwnerOf(request.resource.data.ownerId);
+      allow update, delete: if isOwnerOf(resource.data.ownerId);
+    }
+
+    // Playlist metadata: owners always; anyone else only via an active share.
+    match /playlists/{playlistId} {
+      allow get: if isOwnerOf(resource.data.ownerId)
+                 || (resource.data.shareToken != null
+                     && exists(/databases/$(database)/documents/shares/$(resource.data.shareToken)));
+      allow list: if isOwnerOf(resource.data.ownerId);
+      allow create: if isOwnerOf(request.resource.data.ownerId);
+      allow update, delete: if isOwnerOf(resource.data.ownerId);
+
+      // Items inherit access from the parent playlist.
+      match /items/{movieId} {
+        allow read: if isSharedPlaylist(playlistId)
+                    || isOwnerOf(playlistDoc(playlistId).data.ownerId);
+        allow create, update, delete: if isOwnerOf(playlistDoc(playlistId).data.ownerId);
+      }
+    }
+  }
+}

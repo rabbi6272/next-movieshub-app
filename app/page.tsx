@@ -1,29 +1,23 @@
 "use client";
 import { useState, useEffect, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import Link from "next/link";
-
-import { SmallMovieCard } from "@/components/SmallMovieCard";
-import { Loader } from "@/components/loader";
 
 import { useMovieStore } from "@/store/store";
 import { useAuth } from "@/hooks/useAuth";
 import { getAllMovies } from "@/hooks/useMoviesServices";
-import { Movie } from "@/types/movie";
 
-const getCreatedAtTime = (movie: Movie) => {
-  if (
-    movie &&
-    typeof movie === "object" &&
-    "createdAt" in movie &&
-    typeof (movie as { createdAt?: unknown }).createdAt === "string"
-  ) {
-    return new Date((movie as { createdAt: string }).createdAt).getTime();
-  }
-  return 0;
-};
+import { Button } from "@/components/ui/Button";
+import { Loader } from "@/components/ui/loader";
+import { SmallMovieCard } from "@/components/SmallMovieCard";
+import { PlaylistSection } from "@/components/playlists/PlaylistSection";
+import { TrendingRow } from "@/components/home/TrendingRow";
+import { GuestHeroSection } from "@/components/home/GuestHeroSection";
+import { EmptyLibrary } from "@/components/home/EmptyLibrary";
 
 export default function HomePage() {
+  const router = useRouter();
+
   const [categoryFilter, setategoryFilter] = useState<"all" | "wantToWatch" | "watched">("all");
   const [mediaTypeFilter, setMediaTypeFilter] = useState<("movie" | "tv")[]>([]);
 
@@ -59,16 +53,16 @@ export default function HomePage() {
       );
     }
 
-    return result?.sort((a, b) => getCreatedAtTime(b) - getCreatedAtTime(a)) ?? [];
+    return result ?? [];
   }, [categoryFilter, mediaTypeFilter, savedMovies]);
 
   useEffect(() => {
     if (savedMovies) {
       setSavedMovies(savedMovies);
     }
-  }, [savedMovies]);
+  }, [savedMovies, setSavedMovies]);
 
-  if (moviesLoading) {
+  if (userID && moviesLoading) {
     return (
       <div className="w-full h-[calc(100vh-70px)] flex items-center justify-center">
         <Loader />
@@ -76,53 +70,82 @@ export default function HomePage() {
     );
   }
 
+  const watchedCount = savedMovies?.filter((movie) => movie.watched === true).length || 0;
+
   return (
     <>
       <div className="w-full py-5 px-4 md:pl-6 flex items-center overflow-x-auto gap-2 md:gap-4 scrollbar-hide">
-        <button className={`${categoryFilter === "all" ? "bg-black text-white" : "bgtransparent text-gray-900"} text-sm md:text-base text-nowrap rounded-full px-4 xl:px-6 py-2 border border-gray-300 shadow-md font-semibold transition-all duration-300 cursor-pointer`}
-          onClick={() => setategoryFilter("all")}>
+        <Button
+          onClick={() => setategoryFilter("all")}
+          varient={categoryFilter === "all" ? "primary" : "outline"}
+          size="lg">
           All
-        </button>
-        <button className={`${categoryFilter === "wantToWatch" ? "bg-black text-white" : "bgtransparent text-gray-900"} text-sm md:text-base text-nowrap rounded-full px-4 xl:px-6 py-2 border border-gray-300 shadow-md font-semibold transition-all duration-300 cursor-pointer`}
+        </Button>
+        <Button
+          varient={categoryFilter === "wantToWatch" ? "primary" : "outline"}
+          size="lg"
           onClick={() => setategoryFilter("wantToWatch")}>
           Want to Watch
-        </button >
-        <button className={`${categoryFilter === "watched" ? "bg-black text-white" : "bgtransparent text-gray-900"} text-sm md:text-base text-nowrap rounded-full px-4 xl:px-6 py-2 border border-gray-300 shadow-md font-semibold transition-all duration-300 cursor-pointer`}
+        </Button>
+        <Button
+          varient={categoryFilter === "watched" ? "primary" : "outline"}
+          size="lg"
           onClick={() => setategoryFilter("watched")}>
           Watched
-        </button >
-        <button className={`${mediaTypeFilter.includes("movie") ? "bg-black text-white" : "bgtransparent text-gray-900"} text-sm md:text-base text-nowrap rounded-full px-4 xl:px-6 py-2 border border-gray-300 shadow-md font-semibold transition-all duration-300 cursor-pointer`}
+        </Button>
+        <Button
+          varient={mediaTypeFilter.includes("movie") ? "primary" : "outline"}
+          size="lg"
           onClick={() => toggleMediaType("movie")}>
           Movie
-        </button >
-        <button className={`${mediaTypeFilter.includes("tv") ? "bg-black text-white" : "bgtransparent text-gray-900"} text-sm md:text-base text-nowrap rounded-full px-4 xl:px-6 py-2 border border-gray-300 shadow-md font-semibold transition-all duration-300 cursor-pointer`}
+        </Button>
+        <Button
+          varient={mediaTypeFilter.includes("tv") ? "primary" : "outline"}
+          size="lg"
           onClick={() => toggleMediaType("tv")}>
           Tv Series
-        </button >
+        </Button>
       </div >
 
-      {
-        filteredMovies.length > 0 ? (
-          <div className="w-full grid grid-cols-4 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 2xl:grid-cols-12 gap-0.5 md:gap-2 px-2 md:px-4">
-            {filteredMovies?.map((movie, index) => (
-              <SmallMovieCard
-                key={index || movie.tmdbId || movie.id}
-                movie={movie}
-                index={index}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="w-full pt-15 flex flex-col items-center justify-center">
-            <h1 className="text-2xl font-semibold text-gray-600">No saved movies found!</h1>
-            <p className="text-sm text-gray-400">Try
-              <Link href="/search" className="text-blue-500 hover:underline pl-1">
-                logging in
-              </Link> for saved movies.
-            </p>
-          </div>
-        )
-      }
+      {userID ? (
+        <>
+          <PlaylistSection userID={userID} />
+
+          {savedMovies.length > 0 ? (
+            <div className="mt-6">
+              <div className="px-2 md:px-4 xl:px-6 mb-2">
+                <p className="text-xs md:text-sm text-gray-600 font-medium">
+                  {savedMovies.length} {savedMovies.length === 1 ? "title" : "titles"} saved
+                  {watchedCount > 0 && ` · ${watchedCount} watched`}
+                </p>
+              </div>
+
+              {filteredMovies.length > 0 ? (
+                <div className="w-full grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-0.5 md:gap-2 px-2 md:px-4">
+                  {filteredMovies?.map((movie, index) => (
+                    <SmallMovieCard
+                      key={index || movie.tmdbId || movie.id}
+                      movie={movie}
+                      index={index}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <EmptyLibrary router={router} />
+              )}
+            </div>
+          ) : (
+            <EmptyLibrary router={router} />
+          )}
+
+          <TrendingRow />
+        </>
+      ) : (
+        <>
+          <GuestHeroSection router={router} />
+          <TrendingRow />
+        </>
+      )}
     </>
   );
 }
