@@ -6,9 +6,11 @@ import Link from "next/link";
 import toast from "react-hot-toast";
 
 import { useAuth } from "@/hooks/useAuth";
+import { Button } from "@/components/ui/Button";
 
 export default function LoginForm() {
   const [formData, setFormData] = useState({ email: "", password: "" });
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
   const { isAuthenticated, login } = useAuth();
@@ -55,12 +57,12 @@ export default function LoginForm() {
   }
 
   return (
-    <div className="flex items-center justify-center h-[calc(100vh-70px)] px-4 md:px-0">
+    <div className="flex items-center justify-center h-[calc(100vh-70px-32px)] px-4 sm:px-6 md:px-0">
       <form
         onSubmit={handleSubmit}
-        className="space-y-3 max-w-full md:w-1/3 lg:w-1/4 p-5 bg-white shadow-md rounded-xl"
+        className="space-y-3 w-full sm:w-[70%] md:w-[60%] lg:w-[40%] xl:w-[30%] p-4 md:p-5 xl:p-6 bg-white shadow-xl rounded-3xl"
       >
-        <h1 className="text-3xl text-gray-700 font-semibold text-center mb-2">Log In</h1>
+        <h1 className="text-3xl text-gray-700 font-medium text-center mb-2">Log In</h1>
 
         <div>
           <label htmlFor="email" className="pl-2 text-sm md:text-base font-semibold text-gray-600">
@@ -77,21 +79,31 @@ export default function LoginForm() {
           />
         </div>
 
-        <div>
+        <div className="relative">
           <label htmlFor="password" className="pl-2 text-sm md:text-base font-semibold text-gray-600">
             Password*{" "}
           </label>
           <input
             required
             placeholder="******"
-            type={"password"}
+            type={showPassword ? "text" : "password"}
             id="password"
-            className={"w-full py-2 px-4 text-gray-700 text-sm md:text-base md:text-base placeholder:text-gray-400 placeholder:text-sm md:text-base bg-gray-50 border border-gray-300 rounded-full"}
+            className={"w-full py-2 px-4 pr-10 text-gray-700 text-sm md:text-base placeholder:text-gray-400 placeholder:text-sm md:text-base bg-gray-50 border border-gray-300 rounded-full"}
             value={formData.password}
             onChange={(e) =>
               setFormData({ ...formData, password: e.target.value })
             }
           />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-6 top-[30%] translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
+            aria-label={showPassword ? "Hide password" : "Show password"}
+          >
+            <span className="material-symbols-outlined" style={{ fontSize: "20px" }}>
+              {showPassword ? "visibility" : "visibility_off"}
+            </span>
+          </button>
         </div>
         <p className="w-full text-sm mb-3 text-gray-500">
           <span>
@@ -101,9 +113,9 @@ export default function LoginForm() {
             </Link>
           </span>
         </p>
-        <button type="submit" className={"bg-black text-white w-full rounded-full px-6 py-2.5 font-semibold text-lg"}>
+        <Button size="md" className="w-full mb-2">
           Log In
-        </button>
+        </Button>
       </form>
     </div>
   );

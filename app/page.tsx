@@ -78,30 +78,30 @@ export default function HomePage() {
         <Button
           onClick={() => setategoryFilter("all")}
           varient={categoryFilter === "all" ? "primary" : "outline"}
-          size="lg">
+          size="md">
           All
         </Button>
         <Button
           varient={categoryFilter === "wantToWatch" ? "primary" : "outline"}
-          size="lg"
+          size="md"
           onClick={() => setategoryFilter("wantToWatch")}>
           Want to Watch
         </Button>
         <Button
           varient={categoryFilter === "watched" ? "primary" : "outline"}
-          size="lg"
+          size="md"
           onClick={() => setategoryFilter("watched")}>
           Watched
         </Button>
         <Button
           varient={mediaTypeFilter.includes("movie") ? "primary" : "outline"}
-          size="lg"
+          size="md"
           onClick={() => toggleMediaType("movie")}>
           Movie
         </Button>
         <Button
           varient={mediaTypeFilter.includes("tv") ? "primary" : "outline"}
-          size="lg"
+          size="md"
           onClick={() => toggleMediaType("tv")}>
           Tv Series
         </Button>
@@ -121,7 +121,7 @@ export default function HomePage() {
               </div>
 
               {filteredMovies.length > 0 ? (
-                <div className="w-full grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 gap-0.5 md:gap-2 px-2 md:px-4">
+                <div className="w-full grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 md:grid-cols-8 xl:grid-cols-10 gap-0.5 md:gap-2 px-2 md:px-4">
                   {filteredMovies?.map((movie, index) => (
                     <SmallMovieCard
                       key={index || movie.tmdbId || movie.id}

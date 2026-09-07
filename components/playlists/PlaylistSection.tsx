@@ -59,8 +59,7 @@ export function PlaylistSection({ userID }: { userID: string | null }) {
           My Playlists
         </h2>
 
-        <Button onClick={() => setIsCreateOpen(true)} size="lg">
-          <span className="material-symbols-outlined text-base">add</span>
+        <Button onClick={() => setIsCreateOpen(true)} size="md" icon="add">
           <span className="hidden sm:inline">Create Playlist</span>
           <span className="sm:hidden">Create</span>
         </Button>
@@ -78,7 +77,7 @@ export function PlaylistSection({ userID }: { userID: string | null }) {
           <p className="text-sm text-gray-500 mt-2">No playlists yet</p>
           <Button
             onClick={() => setIsCreateOpen(true)}
-            size="lg"
+            size="md"
             className="mt-3"
           >
             Create your first playlist

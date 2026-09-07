@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { useAuthStore, useMovieStore } from "@/store/store";
 import Image from "next/image";
+import { Button } from "./ui/Button";
 
 const AVATAR_COLORS = [
   "bg-blue-500",
@@ -101,14 +102,10 @@ export function UserAvatar({
           {initials}
         </div>
       ) : (
-        <div
+        <Button
           onClick={toggleDropdown}
-          className={`flex items-center justify-center rounded-full cursor-pointer text-black font-semibold ${sizeClass} ${className}`}
-        >
-          <span className="material-symbols-outlined text-[18px]">
-            person
-          </span>
-        </div>
+          size="md" icon="person" varient="outline" className="border-none shadow-none"
+        />
       )}
       {isShowDropdown && (
         <div

@@ -219,20 +219,6 @@ export default function SearchPage() {
           <p className="text-sm text-gray-500 mt-1 max-w-full">
             Find your favorite movies and TV shows from millions of titles.
           </p>
-          <div className="flex items-center justify-center gap-2 mt-6 max-w-full">
-            <span className="text-xs text-gray-400 font-medium mr-1">Popular:</span>
-            {SUGGESTED_SEARCHES.map((suggestion) => (
-              <Button
-                key={suggestion}
-                onClick={() => setSearchQuery(suggestion)}
-                size="sm"
-                varient="outline"
-                className="whitespace-nowrap"
-              >
-                {suggestion}
-              </Button>
-            ))}
-          </div>
         </div>
       )}
     </div>

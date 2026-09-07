@@ -43,7 +43,7 @@ export function TrendingRow() {
               key={window.value}
               onClick={() => setTimeWindow(window.value)}
               varient={timeWindow === window.value ? "primary" : "outline"}
-              size="lg"
+              size="sm"
             >
               {window.label}
             </Button>
