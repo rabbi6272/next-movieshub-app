@@ -65,10 +65,6 @@ export function useAuth() {
 
   const login = async (email: string, password: string) => {
     const savedUser = await signInWithEmailAndPassword(auth, email, password);
-    if (!savedUser) {
-      toast.error("Login failed");
-      return;
-    }
     const uid = savedUser.user.uid;
     setUser(auth.currentUser);
     setStoredUserID(uid);
@@ -78,10 +74,6 @@ export function useAuth() {
 
   const signup = async (fullName: string, email: string, password: string) => {
     const savedUser = await createUserWithEmailAndPassword(auth, email, password);
-    if (!savedUser) {
-      toast.error("Signup failed");
-      return;
-    }
     await updateProfile(savedUser.user, { displayName: fullName });
 
     const userID = savedUser.user.uid;
@@ -94,10 +86,6 @@ export function useAuth() {
   const loginWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
     const result = await signInWithPopup(auth, provider);
-    if (!result) {
-      toast.error("Google login failed");
-      return;
-    }
     const uid = result.user.uid;
     setUser(auth.currentUser);
     setStoredUserID(uid);

@@ -34,6 +34,7 @@ export default function LoginForm() {
       router.push("/");
     }).catch((error) => {
       console.error(error);
+      throw error;
     });
 
     toast.promise(loginPromise, {
@@ -132,14 +133,6 @@ export default function LoginForm() {
           </button>
         </div>
 
-        <p className="w-full text-sm mb-3 text-gray-500">
-          <span>
-            Don't have an account?{" "}
-            <Link href="/signup" className="text-blue-400">
-              Signup
-            </Link>
-          </span>
-        </p>
         <Button size="md" className="w-full mb-2">
           Log In
         </Button>
@@ -163,6 +156,15 @@ export default function LoginForm() {
           </svg>
           <span className="text-sm font-semibold text-gray-700">Continue with Google</span>
         </button>
+
+        <p className="w-full text-sm mt-3 text-gray-500">
+          <span>
+            Don't have an account?{" "}
+            <Link href="/signup" className="text-blue-400">
+              Signup
+            </Link>
+          </span>
+        </p>
       </form>
 
     </div>
