@@ -9,6 +9,8 @@ import { auth } from "@/utils/firebaseConfig";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
   onAuthStateChanged,
   signOut,
   updateProfile,
@@ -89,6 +91,20 @@ export function useAuth() {
     setUserID(userID);
   };
 
+  const loginWithGoogle = async () => {
+    const provider = new GoogleAuthProvider();
+    const result = await signInWithPopup(auth, provider);
+    if (!result) {
+      toast.error("Google login failed");
+      return;
+    }
+    const uid = result.user.uid;
+    setUser(auth.currentUser);
+    setStoredUserID(uid);
+    setIsAuthenticated(true);
+    setUserID(uid);
+  };
+
   const logout = async () => {
     await signOut(auth);
     setUser(null);
@@ -107,6 +123,7 @@ export function useAuth() {
     isAuthenticated,
     signup,
     login,
+    loginWithGoogle,
     logout,
   };
 }

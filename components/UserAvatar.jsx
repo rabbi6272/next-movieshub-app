@@ -86,21 +86,23 @@ export function UserAvatar({
   return (
     <>
       {isAuthenticated ? (
-        // <Image
-        //   onClick={toggleDropdown}
-        //   src={photoURL}
-        //   alt={avatarAlt}
-        //   width={avatarSize}
-        //   height={avatarSize}
-        //   className={`relative cursor-pointer rounded-full object-cover ${sizeClass} ${className}`}
-        // />
-
-        <div
-          onClick={toggleDropdown}
-          className={`flex items-center justify-center rounded-full cursor-pointer ${bgColor} text-white font-semibold ${sizeClass} ${className}`}
-        >
-          {initials}
-        </div>
+        user?.photoURL ? (
+          <Image
+            onClick={toggleDropdown}
+            src={user.photoURL}
+            alt={avatarAlt}
+            width={avatarSize}
+            height={avatarSize}
+            className={`relative cursor-pointer rounded-full object-cover ${sizeClass} ${className}`}
+          />
+        ) : (
+          <div
+            onClick={toggleDropdown}
+            className={`flex items-center justify-center rounded-full cursor-pointer ${bgColor} text-white font-semibold ${sizeClass} ${className}`}
+          >
+            {initials}
+          </div>
+        )
       ) : (
         <Button
           onClick={toggleDropdown}
