@@ -17,6 +17,16 @@ import { EmptyLibrary } from "@/components/home/EmptyLibrary";
 
 export default function HomePage() {
   const router = useRouter();
+  const { userID } = useAuth();
+
+  if (!userID) {
+    return (
+      <>
+        <GuestHeroSection router={router} />
+        <TrendingRow />
+      </>
+    )
+  }
 
   const [categoryFilter, setategoryFilter] = useState<"all" | "wantToWatch" | "watched">("all");
   const [mediaTypeFilter, setMediaTypeFilter] = useState<("movie" | "tv")[]>([]);
@@ -26,8 +36,6 @@ export default function HomePage() {
       prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type]
     );
   };
-
-  const { userID } = useAuth();
 
   const setSavedMovies = useMovieStore((state) => state.setSavedMovies);
 
@@ -71,7 +79,6 @@ export default function HomePage() {
   }
 
   const watchedCount = savedMovies?.filter((movie) => movie.watched === true).length || 0;
-
   return (
     <>
       <div className="w-full py-5 px-4 md:pl-6 flex items-center overflow-x-auto gap-2 md:gap-4 scrollbar-hide">
@@ -107,45 +114,36 @@ export default function HomePage() {
         </Button>
       </div >
 
-      {userID ? (
-        <>
-          <PlaylistSection userID={userID} />
+      <PlaylistSection userID={userID} />
 
-          {savedMovies.length > 0 ? (
-            <div className="mt-6">
-              <div className="px-2 md:px-4 xl:px-6 mb-2">
-                <p className="text-xs md:text-sm text-gray-600 font-medium">
-                  {savedMovies.length} {savedMovies.length === 1 ? "title" : "titles"} saved
-                  {watchedCount > 0 && ` · ${watchedCount} watched`}
-                </p>
-              </div>
+      {savedMovies.length > 0 ? (
+        <div className="mt-6">
+          <div className="px-2 md:px-4 xl:px-6 mb-2">
+            <p className="text-xs md:text-sm text-gray-600 font-medium">
+              {savedMovies.length} {savedMovies.length === 1 ? "title" : "titles"} saved
+              {watchedCount > 0 && ` · ${watchedCount} watched`}
+            </p>
+          </div>
 
-              {filteredMovies.length > 0 ? (
-                <div className="w-full grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 md:grid-cols-8 xl:grid-cols-10 gap-0.5 md:gap-2 px-2 md:px-4">
-                  {filteredMovies?.map((movie, index) => (
-                    <SmallMovieCard
-                      key={index || movie.tmdbId || movie.id}
-                      movie={movie}
-                      index={index}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <EmptyLibrary router={router} />
-              )}
+          {filteredMovies.length > 0 ? (
+            <div className="w-full grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 md:grid-cols-8 xl:grid-cols-10 gap-0.5 md:gap-2 px-2 md:px-4">
+              {filteredMovies?.map((movie, index) => (
+                <SmallMovieCard
+                  key={index || movie.tmdbId || movie.id}
+                  movie={movie}
+                  index={index}
+                />
+              ))}
             </div>
           ) : (
             <EmptyLibrary router={router} />
           )}
-
-          <TrendingRow />
-        </>
+        </div>
       ) : (
-        <>
-          <GuestHeroSection router={router} />
-          <TrendingRow />
-        </>
+        <EmptyLibrary router={router} />
       )}
+
+      <TrendingRow />
     </>
   );
 }

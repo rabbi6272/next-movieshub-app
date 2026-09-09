@@ -1,5 +1,5 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 
@@ -32,6 +32,7 @@ function setStoredUserID(uid: string | null) {
 }
 
 export function useAuth() {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const user = useAuthStore((state) => state.user);
   const setUser = useAuthStore((state) => state.setUser);
   const userID = useAuthStore((state) => state.userID);
@@ -64,33 +65,51 @@ export function useAuth() {
   }, []);
 
   const login = async (email: string, password: string) => {
-    const savedUser = await signInWithEmailAndPassword(auth, email, password);
-    const uid = savedUser.user.uid;
-    setUser(auth.currentUser);
-    setStoredUserID(uid);
-    setIsAuthenticated(true);
-    setUserID(uid);
+    setIsLoading(true);
+    try {
+      const savedUser = await signInWithEmailAndPassword(auth, email, password);
+      const uid = savedUser.user.uid;
+      setUser(auth.currentUser);
+      setStoredUserID(uid);
+      setIsAuthenticated(true);
+      setUserID(uid);
+    } catch (error) {
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const signup = async (fullName: string, email: string, password: string) => {
-    const savedUser = await createUserWithEmailAndPassword(auth, email, password);
-    await updateProfile(savedUser.user, { displayName: fullName });
+    setIsLoading(true);
+    try {
+      const savedUser = await createUserWithEmailAndPassword(auth, email, password);
+      await updateProfile(savedUser.user, { displayName: fullName });
 
-    const userID = savedUser.user.uid;
-    setUser(auth.currentUser);
-    setStoredUserID(userID);
-    setIsAuthenticated(true);
-    setUserID(userID);
+      const userID = savedUser.user.uid;
+      setUser(auth.currentUser);
+      setStoredUserID(userID);
+      setIsAuthenticated(true);
+      setUserID(userID);
+    } catch (error) {
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const loginWithGoogle = async () => {
-    const provider = new GoogleAuthProvider();
-    const result = await signInWithPopup(auth, provider);
-    const uid = result.user.uid;
-    setUser(auth.currentUser);
-    setStoredUserID(uid);
-    setIsAuthenticated(true);
-    setUserID(uid);
+    try {
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      const uid = result.user.uid;
+      setUser(auth.currentUser);
+      setStoredUserID(uid);
+      setIsAuthenticated(true);
+      setUserID(uid);
+    } catch (error) {
+      throw error;
+    }
   };
 
   const logout = async () => {
@@ -113,5 +132,6 @@ export function useAuth() {
     login,
     loginWithGoogle,
     logout,
+    isLoading,
   };
 }

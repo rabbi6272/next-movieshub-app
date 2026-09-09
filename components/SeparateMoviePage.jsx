@@ -331,7 +331,7 @@ export function SeparateMoviePage({ contentId, mediaType = "movie" }) {
           </div>
 
           {/* Info */}
-          <div className="flex-1 pt-2 sm:pt-8 md:pt-16 ">
+          <div className=" flex-1 pt-2 sm:pt-8 md:pt-16 ">
             {/* Title + badge */}
             <div className="relative">
               <h1 className="text-center md:text-left text-3xl md:text-4xl lg:text-5xl text-black font-nunito font-extrabold leading-tight">
@@ -483,35 +483,29 @@ export function SeparateMoviePage({ contentId, mediaType = "movie" }) {
               <div className="flex gap-3">
                 <Button
                   disabled={isWatchlisted}
+                  loading={isLoading}
                   onClick={handleAddToWatchlist}
                   varient={isWatchlisted ? "primary" : "outline"}
-                  size="lg"
+                  size="md"
                   className="flex-1 flex items-center justify-center gap-2"
                 >
-                  {isLoading ? (
-                    <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  ) : (
-                    <span className="material-symbols-outlined text-lg">
-                      {isWatchlisted ? "bookmark_added" : "bookmark_add"}
-                    </span>
-                  )}
+                  <span className="material-symbols-outlined text-lg">
+                    {isWatchlisted ? "bookmark_added" : "bookmark_add"}
+                  </span>
                   {isWatchlisted ? "In Watchlist" : "Want to Watch"}
                 </Button>
 
                 <Button
                   disabled={isWatched}
                   onClick={handleAddToWatched}
+                  loading={isLoading2}
                   className="flex-1 flex items-center justify-center gap-2"
-                  size="lg"
+                  size="md"
                   varient={isWatched ? "primary" : "outline"}
                 >
-                  {isLoading2 ? (
-                    <span className="w-4 h-4 border-2 border-gray-400/30 border-t-gray-600 rounded-full animate-spin" />
-                  ) : (
-                    <span className="material-symbols-outlined text-lg">
-                      {isWatched ? "check_circle" : "visibility"}
-                    </span>
-                  )}
+                  <span className="material-symbols-outlined text-lg">
+                    {isWatched ? "check_circle" : "visibility"}
+                  </span>
                   {isWatched ? "Already Watched" : "Mark as Watched"}
                 </Button>
               </div>
@@ -520,7 +514,7 @@ export function SeparateMoviePage({ contentId, mediaType = "movie" }) {
                 <Button
                   onClick={() => setShowTrailer(true)}
                   varient="outline"
-                  size="lg"
+                  size="md"
                   className="flex-1 flex items-center justify-center gap-2"
                 >
                   <span className="material-symbols-outlined text-lg">
@@ -533,7 +527,7 @@ export function SeparateMoviePage({ contentId, mediaType = "movie" }) {
               <Button
                 onClick={handleOpenPlaylistModal}
                 className="flex-1 flex items-center justify-center gap-2"
-                size="lg"
+                size="md"
                 varient="outline">
                 <span className="material-symbols-outlined text-lg">
                   playlist_add
@@ -543,8 +537,10 @@ export function SeparateMoviePage({ contentId, mediaType = "movie" }) {
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Similar & Recommended */}
+      {/* Similar & Recommended */}
+      <div className="w-full mx-auto px-4 md:px-8 pb-12">
         <SimilarMovies movies={similarMovies} title="Similar Movies" />
         <SimilarMovies movies={recommendedMovies} title="Recommended" />
       </div>

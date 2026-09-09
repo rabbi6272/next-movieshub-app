@@ -13,7 +13,7 @@ export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
 
-  const { isAuthenticated, login, loginWithGoogle } = useAuth();
+  const { isAuthenticated, login, loginWithGoogle, isLoading } = useAuth();
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -133,7 +133,16 @@ export default function LoginForm() {
           </button>
         </div>
 
-        <Button size="md" className="w-full mb-2">
+        <p className="w-full text-sm mt-3 text-gray-500">
+          <span>
+            Don't have an account?{" "}
+            <Link href="/signup" className="text-blue-400">
+              Signup
+            </Link>
+          </span>
+        </p>
+
+        <Button size="md" className="w-full mb-2" loading={isLoading} >
           Log In
         </Button>
 
@@ -156,15 +165,6 @@ export default function LoginForm() {
           </svg>
           <span className="text-sm font-semibold text-gray-700">Continue with Google</span>
         </button>
-
-        <p className="w-full text-sm mt-3 text-gray-500">
-          <span>
-            Don't have an account?{" "}
-            <Link href="/signup" className="text-blue-400">
-              Signup
-            </Link>
-          </span>
-        </p>
       </form>
 
     </div>

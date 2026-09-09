@@ -155,6 +155,15 @@ export default function SignupForm() {
           </button>
         </div>
 
+        <p className="w-full text-sm mt-3 text-gray-500">
+          <span>
+            Already have an account?{" "}
+            <Link href="/login" className="text-blue-400">
+              Login
+            </Link>
+          </span>
+        </p>
+
         <Button size="md" className="w-full mb-2">
           Sign Up
         </Button>
@@ -178,16 +187,6 @@ export default function SignupForm() {
           </svg>
           <span className="text-sm font-semibold text-gray-700">Continue with Google</span>
         </button>
-
-        <p className="w-full text-sm mt-3 text-gray-500">
-          <span>
-            Already have an account?{" "}
-            <Link href="/login" className="text-blue-400">
-              Login
-            </Link>
-          </span>
-        </p>
-
       </form>
     </div>
   );
