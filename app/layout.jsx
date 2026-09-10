@@ -2,6 +2,7 @@ import "./globals.css";
 
 import { Toaster } from "react-hot-toast";
 import Link from "next/link";
+import { Analytics } from "@vercel/analytics/next"
 
 import Navbar from "@/components/navbar";
 import Providers from "@/components/Providers";
@@ -43,6 +44,8 @@ export default function RootLayout({ children }) {
         <meta property="og:image" content="/icon.png" />
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="MovieMania || Solution for all your movie needs" />
+        <meta name="twitter:description" content="All your favorite movies in one place" />
         <meta name="twitter:url" content="https://movieshub.example.com/" />
         <meta
           name="twitter:title"
@@ -70,6 +73,7 @@ export default function RootLayout({ children }) {
               duration: 2000,
             }}
           />
+          <Analytics />
           <Navbar />
           <main className="min-h-[calc(100vh-70px-32px)]">
             {children}
